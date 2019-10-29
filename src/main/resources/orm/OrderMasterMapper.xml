@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bm.lobby.dao.OrderMasterMapper">
+    <resultMap id="BaseResultMap" type="com.bm.lobby.model.OrderMaster">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="table_no" property="tableNo" jdbcType="VARCHAR"/>
+        <result column="customer_num" property="customerNum" jdbcType="INTEGER"/>
+        <result column="order_amount" property="orderAmount" jdbcType="DECIMAL"/>
+        <result column="order_status" property="orderStatus" jdbcType="TINYINT"/>
+        <result column="customer_remark" property="customerRemark" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="OrderSellResultMap" type="com.bm.lobby.model.OrderSell">
+        <result column="merchant_id" property="merchantId" jdbcType="VARCHAR"/>
+        <result column="catagory_id" property="categoryId" jdbcType="VARCHAR"/>
+        <result column="category_name" property="categoryName" jdbcType="VARCHAR"/>
+        <result column="dish_name" property="dishName" jdbcType="VARCHAR"/>
+        <result column="dish_price" property="dishPrice" jdbcType="DECIMAL"/>
+        <result column="dish_description" property="dishDescription" jdbcType="VARCHAR"/>
+        <result column="dish_icon" property="dishIcon" jdbcType="VARCHAR"/>
+        <result column="dish_stock" property="dishStock" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+    id, merchant_id, table_no, customer_num, order_amount, order_status, customer_remark, 
+    create_time, update_time
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_order_master
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_order_master
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.bm.lobby.model.OrderMaster">
+    insert into t_order_master (id, merchant_id, table_no, 
+      customer_num, order_amount, order_status, 
+      customer_remark, create_time, update_time
+      )
+    values (#{id,jdbcType=VARCHAR}, #{merchantId,jdbcType=VARCHAR}, #{tableNo,jdbcType=VARCHAR}, 
+      #{customerNum,jdbcType=INTEGER}, #{orderAmount,jdbcType=DECIMAL}, #{orderStatus,jdbcType=TINYINT}, 
+      #{customerRemark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.bm.lobby.model.OrderMaster">
+        insert into t_order_master
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="merchantId != null">
+                merchant_id,
+            </if>
+            <if test="tableNo != null">
+                table_no,
+            </if>
+            <if test="customerNum != null">
+                customer_num,
+            </if>
+            <if test="orderAmount != null">
+                order_amount,
+            </if>
+            <if test="orderStatus != null">
+                order_status,
+            </if>
+            <if test="customerRemark != null">
+                customer_remark,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="merchantId != null">
+                #{merchantId,jdbcType=VARCHAR},
+            </if>
+            <if test="tableNo != null">
+                #{tableNo,jdbcType=VARCHAR},
+            </if>
+            <if test="customerNum != null">
+                #{customerNum,jdbcType=INTEGER},
+            </if>
+            <if test="orderAmount != null">
+                #{orderAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="orderStatus != null">
+                #{orderStatus,jdbcType=TINYINT},
+            </if>
+            <if test="customerRemark != null">
+                #{customerRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.bm.lobby.model.OrderMaster">
+        update t_order_master
+        <set>
+            <if test="merchantId != null">
+                merchant_id = #{merchantId,jdbcType=VARCHAR},
+            </if>
+            <if test="tableNo != null">
+                table_no = #{tableNo,jdbcType=VARCHAR},
+            </if>
+            <if test="customerNum != null">
+                customer_num = #{customerNum,jdbcType=INTEGER},
+            </if>
+            <if test="orderAmount != null">
+                order_amount = #{orderAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="orderStatus != null">
+                order_status = #{orderStatus,jdbcType=TINYINT},
+            </if>
+            <if test="customerRemark != null">
+                customer_remark = #{customerRemark,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.bm.lobby.model.OrderMaster">
+    update t_order_master
+    set merchant_id = #{merchantId,jdbcType=VARCHAR},
+      table_no = #{tableNo,jdbcType=VARCHAR},
+      customer_num = #{customerNum,jdbcType=INTEGER},
+      order_amount = #{orderAmount,jdbcType=DECIMAL},
+      order_status = #{orderStatus,jdbcType=TINYINT},
+      customer_remark = #{customerRemark,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+
+    <select id="selectByOrderSell" resultMap="OrderSellResultMap" parameterType="java.lang.String">
+       select shelf.merchant_id, shelf.catagory_id, cate.category_name, cate.category_order,dish.dish_name, dish_price, dish.dish_description,dish.dish_icon, dish.dish_status, dish.dish_stock
+       from t_shelf_detail  shelf
+       inner join t_dishes_info dish on shelf.dish_id = dish.id
+       inner join t_dish_category cate on shelf.catagory_id = cate.id
+       where dish.merchant_id = #{merchantId,jdbcType=VARCHAR} and dish.dish_status = 0 and cate.merchant_id = #{merchantId,jdbcType=VARCHAR}
+       and shelf.merchant_id = #{merchantId,jdbcType=VARCHAR} and shelf.shelf_id = (
+       select id from t_shelf_info where merchant_id =  #{merchantId,jdbcType=VARCHAR} and category_status = 1 limit 0, 1)
+       order by cate.category_order, dish.id
+    </select>
+</mapper>

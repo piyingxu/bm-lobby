@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: bm-lobby
+    author: pyx
+    description: 下单后台
+
+mybatis.mapperLocations: "classpath*:/orm/*.xml"
+
+#pagehelper分页插件
+pagehelper.helper-dialect: "mysql"
+pagehelper.params: "count=countSql"
+pagehelper.reasonable: false
+pagehelper.support-methods-arguments: true
+mapper.identity: "MYSQL"
+spring.datasource.driver-class-name: "com.mysql.jdbc.Driver"
+spring.datasource.initialSize: 1
+spring.datasource.maxActive: 40
+spring.datasource.maxWait: 2000
+spring.datasource.minIdle: 1
+spring.datasource.type: "com.alibaba.druid.pool.DruidDataSource"
+
+spring.datasource.url: "jdbc:mysql://127.0.0.1:3306/order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false"
+spring.datasource.username: "root"
+spring.datasource.password: "123456"
+
+
+logRootPath: E:/logs

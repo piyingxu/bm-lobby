@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bm.lobby.dao.DishesInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.bm.lobby.model.DishesInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="merchant_id" property="merchantId" jdbcType="VARCHAR" />
+    <result column="dish_name" property="dishName" jdbcType="VARCHAR" />
+    <result column="dish_price" property="dishPrice" jdbcType="DECIMAL" />
+    <result column="dish_description" property="dishDescription" jdbcType="VARCHAR" />
+    <result column="dish_icon" property="dishIcon" jdbcType="VARCHAR" />
+    <result column="dish_status" property="dishStatus" jdbcType="INTEGER" />
+    <result column="dish_stock" property="dishStock" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, merchant_id, dish_name, dish_price, dish_description, dish_icon, dish_status, 
+    dish_stock, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_dishes_info
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_dishes_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.bm.lobby.model.DishesInfo" >
+    insert into t_dishes_info (id, merchant_id, dish_name, 
+      dish_price, dish_description, dish_icon, 
+      dish_status, dish_stock, create_time, 
+      update_time)
+    values (#{id,jdbcType=VARCHAR}, #{merchantId,jdbcType=VARCHAR}, #{dishName,jdbcType=VARCHAR}, 
+      #{dishPrice,jdbcType=DECIMAL}, #{dishDescription,jdbcType=VARCHAR}, #{dishIcon,jdbcType=VARCHAR}, 
+      #{dishStatus,jdbcType=INTEGER}, #{dishStock,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bm.lobby.model.DishesInfo" >
+    insert into t_dishes_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="merchantId != null" >
+        merchant_id,
+      </if>
+      <if test="dishName != null" >
+        dish_name,
+      </if>
+      <if test="dishPrice != null" >
+        dish_price,
+      </if>
+      <if test="dishDescription != null" >
+        dish_description,
+      </if>
+      <if test="dishIcon != null" >
+        dish_icon,
+      </if>
+      <if test="dishStatus != null" >
+        dish_status,
+      </if>
+      <if test="dishStock != null" >
+        dish_stock,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantId != null" >
+        #{merchantId,jdbcType=VARCHAR},
+      </if>
+      <if test="dishName != null" >
+        #{dishName,jdbcType=VARCHAR},
+      </if>
+      <if test="dishPrice != null" >
+        #{dishPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="dishDescription != null" >
+        #{dishDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="dishIcon != null" >
+        #{dishIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="dishStatus != null" >
+        #{dishStatus,jdbcType=INTEGER},
+      </if>
+      <if test="dishStock != null" >
+        #{dishStock,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bm.lobby.model.DishesInfo" >
+    update t_dishes_info
+    <set >
+      <if test="merchantId != null" >
+        merchant_id = #{merchantId,jdbcType=VARCHAR},
+      </if>
+      <if test="dishName != null" >
+        dish_name = #{dishName,jdbcType=VARCHAR},
+      </if>
+      <if test="dishPrice != null" >
+        dish_price = #{dishPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="dishDescription != null" >
+        dish_description = #{dishDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="dishIcon != null" >
+        dish_icon = #{dishIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="dishStatus != null" >
+        dish_status = #{dishStatus,jdbcType=INTEGER},
+      </if>
+      <if test="dishStock != null" >
+        dish_stock = #{dishStock,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bm.lobby.model.DishesInfo" >
+    update t_dishes_info
+    set merchant_id = #{merchantId,jdbcType=VARCHAR},
+      dish_name = #{dishName,jdbcType=VARCHAR},
+      dish_price = #{dishPrice,jdbcType=DECIMAL},
+      dish_description = #{dishDescription,jdbcType=VARCHAR},
+      dish_icon = #{dishIcon,jdbcType=VARCHAR},
+      dish_status = #{dishStatus,jdbcType=INTEGER},
+      dish_stock = #{dishStock,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+    <select id="selectConditions" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_dishes_info where 1=1
+        <if test="conditions.merchantId != null">
+            and merchant_id = #{conditions.merchantId}
+        </if>
+        <if test="conditions.dishName != null">
+            and dish_name = #{conditions.dishName}
+        </if>
+        order by create_time desc
+    </select>
+
+</mapper>
