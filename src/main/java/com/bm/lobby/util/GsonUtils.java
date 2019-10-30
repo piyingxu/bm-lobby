@@ -12,9 +12,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**
- * @author yinqi
- * @date 2019/3/28
- */
+* @author: yingxu.pi@transsnet.com
+* @date: 2019/10/30 18:04
+*/
 public class GsonUtils {
     private final static Gson GSON = GsonUtils.getGson();
 

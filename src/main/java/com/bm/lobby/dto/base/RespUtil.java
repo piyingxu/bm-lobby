@@ -1,5 +1,9 @@
 package com.bm.lobby.dto.base;
 
+/**
+ * @author: yingxu.pi@transsnet.com
+ * @date: 2019/10/30 14:20
+ */
 
 public class RespUtil {
     public RespUtil() {

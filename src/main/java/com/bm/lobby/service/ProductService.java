@@ -2,8 +2,7 @@ package com.bm.lobby.service;
 
 import com.bm.lobby.dto.base.PageDto;
 import com.bm.lobby.dto.base.RespResult;
-import com.bm.lobby.dto.req.ProductReq;
-import com.bm.lobby.dto.res.ProductRes;
+import com.bm.lobby.dto.req.LoginReq;
 import com.bm.lobby.model.DishesInfo;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public interface ProductService {
      * 分页查询所有在架商品列表（菜品）
      * @return
      */
-    RespResult<PageDto<DishesInfo>> queryProductList(ProductReq req);
+    RespResult<PageDto<DishesInfo>> queryProductList(LoginReq req);
 
     DishesInfo save(DishesInfo productInfo);
 

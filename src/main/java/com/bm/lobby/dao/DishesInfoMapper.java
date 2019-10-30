@@ -1,7 +1,6 @@
 package com.bm.lobby.dao;
 
-import com.bm.lobby.dto.req.DishesInfoReq;
-import com.bm.lobby.dto.req.ProductReq;
+import com.bm.lobby.dto.req.LoginReq;
 import com.bm.lobby.model.DishesInfo;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
@@ -20,5 +19,5 @@ public interface DishesInfoMapper {
 
     int updateByPrimaryKey(DishesInfo record);
 
-    List<DishesInfo> selectConditions(@Param("conditions") ProductReq conditions);
+    List<DishesInfo> selectConditions(@Param("conditions") LoginReq conditions);
 }

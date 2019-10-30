@@ -3,6 +3,11 @@ package com.bm.lobby.dto.base;
 import java.util.List;
 import java.util.Map;
 
+/**
+* @author: yingxu.pi@transsnet.com
+* @date: 2019/10/30 14:21
+*/
+
 public class PageDto<T>  extends BaseEntity {
     /**
 	 * 

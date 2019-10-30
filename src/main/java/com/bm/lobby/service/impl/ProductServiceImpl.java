@@ -6,7 +6,7 @@ import com.bm.lobby.dao.DishesInfoMapper;
 import com.bm.lobby.dto.base.PageDto;
 import com.bm.lobby.dto.base.RespResult;
 import com.bm.lobby.dto.base.RespUtil;
-import com.bm.lobby.dto.req.ProductReq;
+import com.bm.lobby.dto.req.LoginReq;
 import com.bm.lobby.model.DishesInfo;
 import com.bm.lobby.service.ProductService;
 import com.bm.lobby.util.BeanUtilsCopy;
@@ -34,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public RespResult<PageDto<DishesInfo>> queryProductList(ProductReq req) {
+    public RespResult<PageDto<DishesInfo>> queryProductList(LoginReq req) {
         PageHelper.startPage(req.getPage(), req.getLimit());
         List<DishesInfo> list = dishesInfoMapper.selectConditions(req);
         PageInfo<DishesInfo> pageInfo = new PageInfo<>(list);

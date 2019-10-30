@@ -2,7 +2,7 @@ spring:
   application:
     name: bm-lobby
     author: pyx
-    description: 下单后台
+    description: 大厅
 
 mybatis.mapperLocations: "classpath*:/orm/*.xml"
 
@@ -23,5 +23,18 @@ spring.datasource.url: "jdbc:mysql://127.0.0.1:3306/order?useUnicode=true&charac
 spring.datasource.username: "root"
 spring.datasource.password: "123456"
 
+lobby.redis.database: 1
+lobby.redis.host: "10.200.110.64"
+lobby.redis.port: 6379
+lobby.redis.maxIdle: 1
+lobby.redis.maxTotal: 10
+lobby.redis.maxWaitMillis: 1500
+lobby.redis.password: "redis"
+lobby.redis.timeout: 1500
+lobby.redis.usePool: true
+
+lobby.wx.url: "https://api.weixin.qq.com/"
+lobby.wx.appid: "wx5f1821e86acede94"
+lobby.wx.appscret: "989efa476b9e8019df53c5f125b25b20"
 
 logRootPath: E:/logs
