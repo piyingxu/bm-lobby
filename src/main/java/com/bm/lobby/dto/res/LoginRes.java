@@ -22,7 +22,7 @@ public class LoginRes extends BaseEntity {
     private String headUrl;
 
     @ApiModelProperty(value = "功能开关", example = "")
-    private Map<String, Boolean> funSwtich;
+    private Map<String, Boolean> funSwitch;
 
     @ApiModelProperty(value = "金币", example = "")
     private String gold;
@@ -51,12 +51,12 @@ public class LoginRes extends BaseEntity {
         this.headUrl = headUrl;
     }
 
-    public Map<String, Boolean> getFunSwtich() {
-        return funSwtich;
+    public Map<String, Boolean> getFunSwitch() {
+        return funSwitch;
     }
 
-    public void setFunSwtich(Map<String, Boolean> funSwtich) {
-        this.funSwtich = funSwtich;
+    public void setFunSwitch(Map<String, Boolean> funSwitch) {
+        this.funSwitch = funSwitch;
     }
 
     public String getGold() {

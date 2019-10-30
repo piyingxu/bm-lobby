@@ -6,7 +6,7 @@ public interface PlayerInfoMapper {
 
     int insert(PlayerInfo record);
 
-    PlayerInfo selectByPrimaryKey(String playerId);
+    PlayerInfo selectByPrimaryKey(String condition);
 
     int update(PlayerInfo record);
 

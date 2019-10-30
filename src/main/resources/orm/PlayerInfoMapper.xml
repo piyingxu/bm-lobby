@@ -23,7 +23,7 @@
     select 
     <include refid="Base_Column_List" />
     from t_player_info
-    where player_id = #{playerId,jdbcType=BIGINT}
+    where player_id = #{playerId,jdbcType=VARCHAR} or auth_id = #{authId,jdbcType=VARCHAR}
   </select>
 
   <insert id="insert" parameterType="com.bm.lobby.model.PlayerInfo" >

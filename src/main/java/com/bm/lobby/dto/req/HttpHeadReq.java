@@ -10,7 +10,7 @@ public class HttpHeadReq extends BaseEntity {
 
     private String token;
 
-    private String appid;
+    private String appId;
 
     private String deviceId;
 
@@ -28,12 +28,12 @@ public class HttpHeadReq extends BaseEntity {
         this.token = token;
     }
 
-    public String getAppid() {
-        return appid;
+    public String getAppId() {
+        return appId;
     }
 
-    public void setAppid(String appid) {
-        this.appid = appid;
+    public void setAppId(String appId) {
+        this.appId = appId;
     }
 
     public String getDeviceId() {

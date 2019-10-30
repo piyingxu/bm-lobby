@@ -158,7 +158,7 @@ public class SecurityFilter implements Filter {
             return null;
         }
         HttpHeadReq httpHeadReq = new HttpHeadReq();
-        httpHeadReq.setAppid(appId);
+        httpHeadReq.setAppId(appId);
         httpHeadReq.setDeviceId(deviceId);
         httpHeadReq.setDeviceType(deviceType);
         httpHeadReq.setClientVer(clientVer);
