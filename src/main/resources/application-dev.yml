@@ -1,17 +1,17 @@
 server:
   port: 9081
 
-spring.datasource.url: "jdbc:mysql://127.0.0.1:3306/order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false"
+spring.datasource.url: "jdbc:mysql://120.79.5.223:3306/lobby?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false"
 spring.datasource.username: "root"
-spring.datasource.password: "123456"
+spring.datasource.password: "lxz123qwe"
 
 lobby.redis.database: 1
-lobby.redis.host: "10.200.110.64"
+lobby.redis.host: "120.79.5.223"
 lobby.redis.port: 6379
 lobby.redis.maxIdle: 1
 lobby.redis.maxTotal: 10
 lobby.redis.maxWaitMillis: 1500
-lobby.redis.password: "redis"
+lobby.redis.password: "lxz123qwe"
 lobby.redis.timeout: 1500
 lobby.redis.usePool: true
 
