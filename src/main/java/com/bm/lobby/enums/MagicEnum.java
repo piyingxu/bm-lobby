@@ -4,15 +4,10 @@ package com.bm.lobby.enums;
 * @author: yingxu.pi@transsnet.com
 * @date: 2019/9/20 13:40
 */
-public enum RedisTableEnum {
+public enum MagicEnum {
 
-	REQUEST_TOKEN("lobby:token:", "请求token"),
+    GOLD("gold", "金币"),
 
-    CURR_PLAYERID("lobby:palyerId:", "当前playerId"),
-
-    AUTO_INCREMENT("lobby:increment:", "当前playerId"),
-
-    MAGIC("lobby:magic:", "道具"),
 
 	;
 
@@ -20,7 +15,7 @@ public enum RedisTableEnum {
 
 	private String msg;
 
-	RedisTableEnum(String code, String msg) {
+	MagicEnum(String code, String msg) {
 		this.code = code;
 		this.msg = msg;
 	}

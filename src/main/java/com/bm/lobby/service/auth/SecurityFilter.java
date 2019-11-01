@@ -117,7 +117,7 @@ public class SecurityFilter implements Filter {
                 return timeOut;
             }
             // 根据token获取当前会话的memberId(赋值同上)
-            String key2 = RedisTableEnum.REQUEST_TOKEN.getCode() + token;
+            String key2 = RedisTableEnum.CURR_PLAYERID.getCode() + token;
             String playerId = redisService.getRedisValue(key2);
             if (StringUtils.isBlank(playerId)) {
                 return timeOut;

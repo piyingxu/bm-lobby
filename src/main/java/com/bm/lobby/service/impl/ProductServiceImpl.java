@@ -35,13 +35,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public RespResult<PageDto<DishesInfo>> queryProductList(LoginReq req) {
-        PageHelper.startPage(req.getPage(), req.getLimit());
+        /*PageHelper.startPage(req.getPage(), req.getLimit());
         List<DishesInfo> list = dishesInfoMapper.selectConditions(req);
         PageInfo<DishesInfo> pageInfo = new PageInfo<>(list);
         PageDto<DishesInfo> target = new PageDto<>();
         BeanUtilsCopy.copyProperties(pageInfo, target);
-        target.setList(list);
-        return RespUtil.success(target);
+        target.setList(list);*/
+        return RespUtil.success(null);
     }
 
     @Override

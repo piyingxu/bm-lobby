@@ -57,6 +57,9 @@ public class LobbyConfiguration {
     @Value("${lobby.token.valid.time:2592000}")
     private long token_valid_time;
 
+    @Value("${lobby.player.startid:1000000}")
+    private long playerStartId;
+
     @Bean
     @Primary
     public RestTemplate createRestTemplate() throws Exception {
@@ -193,5 +196,13 @@ public class LobbyConfiguration {
 
     public void setToken_valid_time(long token_valid_time) {
         this.token_valid_time = token_valid_time;
+    }
+
+    public long getPlayerStartId() {
+        return playerStartId;
+    }
+
+    public void setPlayerStartId(long playerStartId) {
+        this.playerStartId = playerStartId;
     }
 }

@@ -25,7 +25,10 @@ public class LoginRes extends BaseEntity {
     private Map<String, Boolean> funSwitch;
 
     @ApiModelProperty(value = "金币", example = "")
-    private String gold;
+    private Long gold;
+
+    @ApiModelProperty(value = "玩家ID", example = "1000001")
+    private String pid;
 
     public String getToken() {
         return token;
@@ -59,11 +62,19 @@ public class LoginRes extends BaseEntity {
         this.funSwitch = funSwitch;
     }
 
-    public String getGold() {
+    public Long getGold() {
         return gold;
     }
 
-    public void setGold(String gold) {
+    public void setGold(Long gold) {
         this.gold = gold;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
     }
 }

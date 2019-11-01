@@ -8,16 +8,17 @@ import com.bm.lobby.dto.base.ServiceException;
 import com.bm.lobby.dto.req.HttpHeadReq;
 import com.bm.lobby.dto.req.LoginReq;
 import com.bm.lobby.dto.res.LoginRes;
-import com.bm.lobby.enums.AuthTypeEnum;
-import com.bm.lobby.enums.HttpParamEnum;
-import com.bm.lobby.enums.RedisTableEnum;
-import com.bm.lobby.enums.RespLobbyCode;
+import com.bm.lobby.enums.*;
 import com.bm.lobby.model.PlayerInfo;
+import com.bm.lobby.service.MagicService;
 import com.bm.lobby.service.PlayerService;
 import com.bm.lobby.service.RedisService;
 import com.bm.lobby.service.ThirdPartService;
+import com.bm.lobby.util.Log;
 import com.bm.lobby.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -35,6 +36,8 @@ import java.util.UUID;
 @Service
 public class PlayerServiceImpl implements PlayerService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(RedisServiceImpl.class);
+
     @Resource
     private PlayerInfoMapper playerInfoMapper;
 
@@ -46,6 +49,9 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Resource
     private RedisService redisService;
+
+    @Resource
+    private MagicService magicService;
 
     @Override
     public RespResult<LoginRes> login(LoginReq req) {
@@ -61,7 +67,7 @@ public class PlayerServiceImpl implements PlayerService {
         // 关联playerId
         PlayerInfo playerInfo = playerInfoMapper.selectByPrimaryKey(authId);
         if (playerInfo == null) {
-            playerId = buildPlayId();
+            playerId = String.valueOf(redisService.getIncr(RedisTableEnum.AUTO_INCREMENT.getCode()));
             // 新注册用户
             PlayerInfo newPlayer = new PlayerInfo();
             newPlayer.setAppId(httpHeadReq.getAppId());
@@ -77,14 +83,15 @@ public class PlayerServiceImpl implements PlayerService {
         }
         String token = buildToken(httpHeadReq.getDeviceId(), playerId);
         loginRes.setToken(token);
+        loginRes.setPid(playerId);
         //设置开关
         Map<String, Boolean> funSwitch = new HashMap<>();
         funSwitch.put("Task", true);
         funSwitch.put("Challenge", false);
         loginRes.setFunSwitch(funSwitch);
         //获取金币
-        //redisService.getRedisValue()
-
+        long gold = magicService.getOrUpMagic(MagicEnum.GOLD, playerId, 0);
+        loginRes.setGold(gold);
         return RespUtil.success(loginRes);
     }
 
@@ -106,7 +113,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     private String getUserInfo(LoginReq req, LoginRes res) {
-        Map<String, Object> wxAccessToken = thirdPartService.getWxAccessToken(req.getAuthToken());
+        /*Map<String, Object> wxAccessToken = thirdPartService.getWxAccessToken(req.getAuthToken());
         Object wxATErrorCode = wxAccessToken.get("errcode");
         if (wxATErrorCode != null) {
             throw new ServiceException(RespLobbyCode.AUTH_ERROR.getCode(), String.valueOf(wxATErrorCode));
@@ -121,25 +128,26 @@ public class PlayerServiceImpl implements PlayerService {
         Object headImgUrlObj = wxUserInfo.get("headimgurl");
         if (StringUtil.objIsNull(nickNameObj, headImgUrlObj)) {
             throw new ServiceException(RespLobbyCode.AUTH_ERROR.getCode(), String.valueOf(wxATErrorCode));
-        }
-        res.setNickName(String.valueOf(nickNameObj));
-        res.setHeadUrl(String.valueOf(nickNameObj));
-        return openId;
+        }*/
+        res.setNickName(String.valueOf("py"));
+        res.setHeadUrl(String.valueOf("http"));
+        return "1572506157813";
     }
 
     public String buildToken(String deviceId, String playerId) {
-        String token = UUID.randomUUID().toString();
+        String token = UUID.randomUUID().toString().replaceAll("-", "");
         String key1 = RedisTableEnum.REQUEST_TOKEN.getCode() + deviceId;
+        // 删除之前的token
+        String oldToken = redisService.getRedisValue(key1);
+        redisService.delRedis(RedisTableEnum.CURR_PLAYERID.getCode() + oldToken);
+        // 赋新值
         redisService.setRedis(key1, token, lobbyConfiguration.getToken_valid_time());
-        String key2 = RedisTableEnum.REQUEST_TOKEN.getCode() + token;
+        String key2 = RedisTableEnum.CURR_PLAYERID.getCode() + token;
         redisService.setRedis(key2, playerId, lobbyConfiguration.getToken_valid_time());
+        LOG.info("buildToken deviceId={}, playerId={}", deviceId, playerId);
         return token;
     }
 
-    public String buildPlayId() {
-        return UUID.randomUUID().toString();
-
-    }
 
 
 }
