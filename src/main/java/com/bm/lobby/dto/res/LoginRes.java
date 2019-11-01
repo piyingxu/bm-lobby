@@ -3,6 +3,7 @@ package com.bm.lobby.dto.res;
 import com.bm.lobby.dto.base.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +30,9 @@ public class LoginRes extends BaseEntity {
 
     @ApiModelProperty(value = "玩家ID", example = "1000001")
     private String pid;
+
+    @ApiModelProperty(value = "玩家ID", example = "1000001")
+    private List<GameDto> gameList;
 
     public String getToken() {
         return token;
@@ -76,5 +80,13 @@ public class LoginRes extends BaseEntity {
 
     public void setPid(String pid) {
         this.pid = pid;
+    }
+
+    public List<GameDto> getGameList() {
+        return gameList;
+    }
+
+    public void setGameList(List<GameDto> gameList) {
+        this.gameList = gameList;
     }
 }

@@ -23,7 +23,8 @@ public enum RespLobbyCode implements RespCode {
     // 第三方授权失败
     AUTH_ERROR("LOBBY_000008", "ThirdPart auth failure"),
 
-
+    // 第三方授权失败
+    PID_ISNULL("LOBBY_000009", "Pid can not found"),
 
 
     MAX("LOBBY_999999", "Max");

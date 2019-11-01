@@ -1,21 +1,23 @@
 package com.bm.lobby.service.impl;
 
 import com.bm.lobby.config.LobbyConfiguration;
+import com.bm.lobby.dao.GameConfigMapper;
 import com.bm.lobby.dao.PlayerInfoMapper;
 import com.bm.lobby.dto.base.RespResult;
 import com.bm.lobby.dto.base.RespUtil;
 import com.bm.lobby.dto.base.ServiceException;
 import com.bm.lobby.dto.req.HttpHeadReq;
 import com.bm.lobby.dto.req.LoginReq;
+import com.bm.lobby.dto.res.GameDto;
 import com.bm.lobby.dto.res.LoginRes;
 import com.bm.lobby.enums.*;
+import com.bm.lobby.model.GameConfig;
 import com.bm.lobby.model.PlayerInfo;
-import com.bm.lobby.service.MagicService;
-import com.bm.lobby.service.PlayerService;
-import com.bm.lobby.service.RedisService;
-import com.bm.lobby.service.ThirdPartService;
+import com.bm.lobby.service.*;
+import com.bm.lobby.util.BeanUtilsCopy;
 import com.bm.lobby.util.Log;
 import com.bm.lobby.util.StringUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +27,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author: yingxu.pi@transsnet.com
@@ -36,10 +36,13 @@ import java.util.UUID;
 @Service
 public class PlayerServiceImpl implements PlayerService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RedisServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PlayerServiceImpl.class);
 
     @Resource
     private PlayerInfoMapper playerInfoMapper;
+
+    @Resource
+    private GameConfigMapper gameConfigMapper;
 
     @Resource
     private ThirdPartService thirdPartService;
@@ -53,13 +56,16 @@ public class PlayerServiceImpl implements PlayerService {
     @Resource
     private MagicService magicService;
 
+    @Resource
+    private CommonService commonService;
+
     @Override
     public RespResult<LoginRes> login(LoginReq req) {
         if (!req.getAuthType().equals(AuthTypeEnum.WECHAT.getCode())) {
             // 目前仅支持微信
             throw new ServiceException(RespLobbyCode.PARAM_ERROR);
         }
-        HttpHeadReq httpHeadReq = getHeadParam();
+        HttpHeadReq httpHeadReq = commonService.getHeadParam();
         LoginRes loginRes = new LoginRes();
         // 获取第三方昵称和头像信息
         String authId = getUserInfo(req, loginRes);
@@ -81,9 +87,20 @@ public class PlayerServiceImpl implements PlayerService {
         } else {
             playerId = playerInfo.getPlayerId();
         }
-        String token = buildToken(httpHeadReq.getDeviceId(), playerId);
+        String token = commonService.buildToken(httpHeadReq.getDeviceId(), playerId);
         loginRes.setToken(token);
         loginRes.setPid(playerId);
+        //获取配置游戏列表
+        List<GameConfig> gameListDb =  gameConfigMapper.selectByAppId(httpHeadReq.getAppId());
+        List<GameDto> gameList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(gameListDb)) {
+            for (GameConfig game:gameListDb) {
+                GameDto dto = new GameDto();
+                BeanUtilsCopy.copyProperties(game, dto);
+                gameList.add(dto);
+            }
+        }
+        loginRes.setGameList(gameList);
         //设置开关
         Map<String, Boolean> funSwitch = new HashMap<>();
         funSwitch.put("Task", true);
@@ -96,21 +113,23 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public HttpHeadReq getHeadParam() {
-        HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String appId = req.getHeader(HttpParamEnum.APPID.getCode());
-        String deviceId = req.getHeader(HttpParamEnum.DEVICE_ID.getCode());
-        String deviceType = req.getHeader(HttpParamEnum.DEVICE_TYPE.getCode());
-        String clientVer = req.getHeader(HttpParamEnum.CLIENT_VER.getCode());
-        String token = req.getHeader(HttpParamEnum.TOKEN.getCode());
-        HttpHeadReq httpHeadReq = new HttpHeadReq();
-        httpHeadReq.setAppId(appId);
-        httpHeadReq.setDeviceId(deviceId);
-        httpHeadReq.setDeviceType(deviceType);
-        httpHeadReq.setClientVer(clientVer);
-        httpHeadReq.setToken(token);
-        return httpHeadReq;
+    public RespResult<Void> logout () {
+        String pid = commonService.getCurrPid();
+        HttpHeadReq httpHeadReq = commonService.getHeadParam();
+        //解绑token、playerId
+        redisService.delRedis(RedisTableEnum.REQUEST_TOKEN.getCode() + httpHeadReq.getDeviceId());
+        redisService.delRedis(RedisTableEnum.CURR_PLAYERID.getCode() + httpHeadReq.getToken());
+        return RespUtil.success(null);
     }
+
+    @Override
+    public RespResult<Long> refreshGold () {
+        String pid = commonService.getCurrPid();
+        long gold =  magicService.getOrUpMagic(MagicEnum.GOLD, pid, 0);
+        return RespUtil.success(gold);
+    }
+
+
 
     private String getUserInfo(LoginReq req, LoginRes res) {
         /*Map<String, Object> wxAccessToken = thirdPartService.getWxAccessToken(req.getAuthToken());
@@ -134,19 +153,7 @@ public class PlayerServiceImpl implements PlayerService {
         return "1572506157813";
     }
 
-    public String buildToken(String deviceId, String playerId) {
-        String token = UUID.randomUUID().toString().replaceAll("-", "");
-        String key1 = RedisTableEnum.REQUEST_TOKEN.getCode() + deviceId;
-        // 删除之前的token
-        String oldToken = redisService.getRedisValue(key1);
-        redisService.delRedis(RedisTableEnum.CURR_PLAYERID.getCode() + oldToken);
-        // 赋新值
-        redisService.setRedis(key1, token, lobbyConfiguration.getToken_valid_time());
-        String key2 = RedisTableEnum.CURR_PLAYERID.getCode() + token;
-        redisService.setRedis(key2, playerId, lobbyConfiguration.getToken_valid_time());
-        LOG.info("buildToken deviceId={}, playerId={}", deviceId, playerId);
-        return token;
-    }
+
 
 
 

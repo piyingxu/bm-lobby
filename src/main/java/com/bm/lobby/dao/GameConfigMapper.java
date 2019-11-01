@@ -1,19 +1,10 @@
 package com.bm.lobby.dao;
 
-
 import com.bm.lobby.model.GameConfig;
+import java.util.List;
 
 public interface GameConfigMapper {
 
-    int deleteByPrimaryKey(Long id);
+    List<GameConfig> selectByAppId(String appId);
 
-    int insert(GameConfig record);
-
-    int insertSelective(GameConfig record);
-
-    GameConfig selectByPrimaryKey(Long id);
-
-    int updateByPrimaryKeySelective(GameConfig record);
-
-    int updateByPrimaryKey(GameConfig record);
 }

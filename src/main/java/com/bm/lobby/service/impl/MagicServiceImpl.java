@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 @Service
 public class MagicServiceImpl implements MagicService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RedisServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MagicServiceImpl.class);
 
     @Resource
     private RedisService redisService;

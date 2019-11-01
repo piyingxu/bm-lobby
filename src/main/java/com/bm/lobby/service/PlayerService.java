@@ -1,7 +1,6 @@
 package com.bm.lobby.service;
 
 import com.bm.lobby.dto.base.RespResult;
-import com.bm.lobby.dto.req.HttpHeadReq;
 import com.bm.lobby.dto.req.LoginReq;
 import com.bm.lobby.dto.res.LoginRes;
 
@@ -14,7 +13,8 @@ public interface PlayerService {
 
     RespResult<LoginRes> login (LoginReq req);
 
-    HttpHeadReq getHeadParam();
+    RespResult<Void> logout ();
 
+    RespResult<Long> refreshGold ();
 
 }
