@@ -19,5 +19,5 @@ lobby.wx.url: "https://api.weixin.qq.com/"
 lobby.wx.appid: "wx5f1821e86acede94"
 lobby.wx.appscret: "989efa476b9e8019df53c5f125b25b20"
 
-logRootPath: E:/logs
+logRootPath: "/game/logs"
   
