@@ -13,6 +13,8 @@ public class PlayerInfo extends BaseEntity {
 
     private String nickName;
 
+    private String headUrl;
+
     private Byte gender;
 
     private String authType;
@@ -59,6 +61,14 @@ public class PlayerInfo extends BaseEntity {
 
     public void setNickName(String nickName) {
         this.nickName = nickName == null ? null : nickName.trim();
+    }
+
+    public String getHeadUrl() {
+        return headUrl;
+    }
+
+    public void setHeadUrl(String headUrl) {
+        this.headUrl = headUrl;
     }
 
     public Byte getGender() {

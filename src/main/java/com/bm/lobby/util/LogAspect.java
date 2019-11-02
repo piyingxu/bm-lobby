@@ -1,6 +1,7 @@
 package com.bm.lobby.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.bm.lobby.service.CommonService;
 import io.swagger.annotations.ApiOperation;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -11,6 +12,8 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -25,6 +28,9 @@ import java.util.List;
 public class LogAspect {
 
     private Logger logger = LoggerFactory.getLogger(LogAspect.class);
+
+    @Resource
+    private CommonService commonService;
 
     @Pointcut("within(@org.springframework.web.bind.annotation.RestController *) && @annotation(Log)")
     public void advice() {
@@ -59,24 +65,25 @@ public class LogAspect {
             logger.warn("<=====请求参数json转化异常");
         }
         Object obj = null;
+        String pid = commonService.getCurrPid();
         if (api != null) {
             apidesc = api.value();
-            logger.info("=====>类名：[{}]，方法：[{}],描述：[{}]，请求参数req:{}", className, methodName, apidesc, paramsStr);
+            logger.info("=====>类名：[{}]，方法：[{}],描述：[{}]，请求参数req:{}, pid:{}", className, methodName, apidesc, paramsStr, pid);
             obj = point.proceed();
             long time2 = System.currentTimeMillis();
-            logger.info("=====>类名：[{}]，方法：[{}],描述：[{}]，方法执行时长：{}ms，返回结果rsp:{}", className, methodName, apidesc, time2 - time1, JSONObject.toJSONString(obj));
+            logger.info("=====>类名：[{}]，方法：[{}],描述：[{}]，方法执行时长：{}ms，返回结果rsp:{}, pid:{}", className, methodName, apidesc, time2 - time1, JSONObject.toJSONString(obj), pid);
         } else if (log != null) {
             apidesc = log.value();
             if (log.before() && !log.duration()) {
-                logger.info("=====>类名：[{}]，方法：[{}],描述：[{}]，请求参数req:{}", className, methodName, apidesc, paramsStr);
+                logger.info("=====>类名：[{}]，方法：[{}],描述：[{}]，请求参数req:{}, pid:{}", className, methodName, apidesc, paramsStr, pid);
             }
             obj = point.proceed();
             long time2 = System.currentTimeMillis();
             if (log.duration()) {
-                logger.info("=====>类名：[{}]，方法：[{}],描述：[{}]，方法执行时长：{}ms", className, methodName, apidesc, time2 - time1);
+                logger.info("=====>类名：[{}]，方法：[{}],描述：[{}]，方法执行时长：{}ms, pid:{}", className, methodName, apidesc, time2 - time1, pid);
             } else {
                 if (log.after()) {
-                    logger.info("=====>类名：[{}]，方法：[{}],描述：[{}]，方法执行时长：{}ms，返回结果rsp:{}", className, methodName, apidesc, time2 - time1, JSONObject.toJSONString(obj));
+                    logger.info("=====>类名：[{}]，方法：[{}],描述：[{}]，方法执行时长：{}ms，返回结果rsp:{}, pid:{}", className, methodName, apidesc, time2 - time1, JSONObject.toJSONString(obj), pid);
                 }
             }
         } else {

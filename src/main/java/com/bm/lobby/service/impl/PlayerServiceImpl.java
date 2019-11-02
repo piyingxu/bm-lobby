@@ -6,8 +6,11 @@ import com.bm.lobby.dao.PlayerInfoMapper;
 import com.bm.lobby.dto.base.RespResult;
 import com.bm.lobby.dto.base.RespUtil;
 import com.bm.lobby.dto.base.ServiceException;
+import com.bm.lobby.dto.req.CheckInAwardReq;
 import com.bm.lobby.dto.req.HttpHeadReq;
 import com.bm.lobby.dto.req.LoginReq;
+import com.bm.lobby.dto.res.CheckInAwardRes;
+import com.bm.lobby.dto.res.CheckInRes;
 import com.bm.lobby.dto.res.GameDto;
 import com.bm.lobby.dto.res.LoginRes;
 import com.bm.lobby.enums.*;
@@ -15,18 +18,13 @@ import com.bm.lobby.model.GameConfig;
 import com.bm.lobby.model.PlayerInfo;
 import com.bm.lobby.service.*;
 import com.bm.lobby.util.BeanUtilsCopy;
-import com.bm.lobby.util.Log;
-import com.bm.lobby.util.StringUtil;
+import com.bm.lobby.util.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -78,6 +76,7 @@ public class PlayerServiceImpl implements PlayerService {
             PlayerInfo newPlayer = new PlayerInfo();
             newPlayer.setAppId(httpHeadReq.getAppId());
             newPlayer.setNickName(loginRes.getNickName());
+            newPlayer.setHeadUrl(loginRes.getHeadUrl());
             newPlayer.setAuthId(authId);
             newPlayer.setAuthType(req.getAuthType());
             newPlayer.setClientType(httpHeadReq.getDeviceType());
@@ -127,6 +126,62 @@ public class PlayerServiceImpl implements PlayerService {
         String pid = commonService.getCurrPid();
         long gold =  magicService.getOrUpMagic(MagicEnum.GOLD, pid, 0);
         return RespUtil.success(gold);
+    }
+
+    @Override
+    public RespResult<List<CheckInRes>> getCheckInStatus () {
+        List<Integer> hourList = commonService.getCheckInConfig();
+        String pid = commonService.getCurrPid();
+        Map<String, Object> checkInMap =redisService.hgetAll(RedisTableEnum.getCheckInKey(pid));
+        if (checkInMap == null || checkInMap.size() == 0) {
+            checkInMap = new HashMap<>();
+            for (Integer hour:hourList) {
+                checkInMap.put(String.valueOf(hour), "0");
+            }
+            // 本日初始化
+            redisService.putAll(RedisTableEnum.getCheckInKey(pid), checkInMap, 60*60*24*2);
+        }
+        // 因为key的数据类型不一样，整数才能排序正确
+        Map<Integer, Object> sortedCheckInMap = new TreeMap<Integer, Object>();
+        for (String tempkey:checkInMap.keySet()) {
+            sortedCheckInMap.put(Integer.parseInt(tempkey), checkInMap.get(tempkey));
+        }
+        List<CheckInRes> retArr = new ArrayList<>();
+        for (Integer timeHour:sortedCheckInMap.keySet()) {
+            String val = String.valueOf(sortedCheckInMap.get(timeHour));
+            int timeHour_next = timeHour + 4;
+            CheckInRes checkInRes = new CheckInRes();
+            checkInRes.setHour(timeHour);
+            if ("0".equals(val)) {
+                // 未领取
+                if (DateUtil.getHour() < timeHour) {
+                    // 未到点
+                    checkInRes.setStatus(CheckInStatusEnum.UNREACHED_TIME.getCode());
+                } else if (DateUtil.getHour() >= timeHour && DateUtil.getHour() < timeHour_next) {
+                    // 正点-可领
+                    checkInRes.setStatus(CheckInStatusEnum.ONTIME_CAN.getCode());
+                } else {
+                    // 超点-可补签
+                    checkInRes.setStatus(CheckInStatusEnum.REISSUE_CAN.getCode());
+                }
+            } else {
+                // 可领取
+                checkInRes.setStatus(CheckInStatusEnum.ALREADY_RECEIVE.getCode());
+            }
+            retArr.add(checkInRes);
+        }
+        return RespUtil.success(retArr);
+    }
+
+    public RespResult<CheckInAwardRes> getCheckInAward (CheckInAwardReq req) {
+        List<Integer> hourList = commonService.getCheckInConfig();
+
+
+
+
+        String pid = commonService.getCurrPid();
+        long gold =  magicService.getOrUpMagic(MagicEnum.GOLD, pid, 0);
+        return RespUtil.success(null);
     }
 
 

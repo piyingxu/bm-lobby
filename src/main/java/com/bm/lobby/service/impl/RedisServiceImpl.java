@@ -11,6 +11,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 @Service
 public class RedisServiceImpl implements RedisService {
 
@@ -76,6 +79,21 @@ public class RedisServiceImpl implements RedisService {
     public String hget(String key, String field) {
         BoundHashOperations<String, String, String> ops = redisTemplate.boundHashOps(key);
         return ops.get(field);
+    }
+
+    @Override
+    public void putAll(String key, Map<String, Object> val, long second) {
+        BoundHashOperations<String, String, Object> ops = redisTemplate.boundHashOps(key);
+        ops.putAll(val);
+        if (second > 0) {
+            ops.expire(second, TimeUnit.SECONDS);
+        }
+    }
+
+    @Override
+    public Map<String, Object> hgetAll(String key) {
+        BoundHashOperations<String, String, Object> ops = redisTemplate.boundHashOps(key);
+        return ops.entries();
     }
 
     @Override

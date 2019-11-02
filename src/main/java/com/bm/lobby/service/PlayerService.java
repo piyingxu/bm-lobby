@@ -2,7 +2,10 @@ package com.bm.lobby.service;
 
 import com.bm.lobby.dto.base.RespResult;
 import com.bm.lobby.dto.req.LoginReq;
+import com.bm.lobby.dto.res.CheckInRes;
 import com.bm.lobby.dto.res.LoginRes;
+
+import java.util.List;
 
 /**
 * @author: yingxu.pi@transsnet.com
@@ -16,5 +19,7 @@ public interface PlayerService {
     RespResult<Void> logout ();
 
     RespResult<Long> refreshGold ();
+
+    RespResult<List<CheckInRes>> getCheckInStatus ();
 
 }

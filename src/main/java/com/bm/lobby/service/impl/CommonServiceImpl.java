@@ -20,6 +20,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -83,5 +86,15 @@ public class CommonServiceImpl implements CommonService {
         }
         return pid;
     }
+
+    @Override
+    public List<Integer> getCheckInConfig() {
+        List<Integer> hourList = new ArrayList<>();
+        hourList.add(0);hourList.add(4);hourList.add(8);
+        hourList.add(12);hourList.add(16);hourList.add(20);
+        return hourList;
+    }
+
+
 
 }

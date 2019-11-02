@@ -1,5 +1,7 @@
 package com.bm.lobby.service;
 
+import java.util.Map;
+
 public interface RedisService {
 
 	String getRedisValue(String key);
@@ -15,6 +17,10 @@ public interface RedisService {
     void put (String key, String field, String val);
 
     String hget(String key, String field);
+
+    void putAll (String key, Map<String, Object> val, long second);
+
+    Map<String, Object> hgetAll(String key);
 
     long hincrBy( String key, String field, long value);
 }
