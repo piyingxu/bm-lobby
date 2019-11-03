@@ -58,6 +58,12 @@ public class SecurityFilter implements Filter {
             request = new RequestWrapper((HttpServletRequest) req);
         }
         String path = request.getRequestURI().substring(request.getContextPath().length()).replaceAll("[/]+$", "");
+        // 验证请求头参数
+        HttpHeadReq headInfo = getHeadInfo(request, false);
+        if (headInfo == null) {
+            handleResponse(response, new RespResult<>(RespLobbyCode.HEAD_PARAM_ERROR.getCode(), RespLobbyCode.HEAD_PARAM_ERROR.getMsg(), Boolean.FALSE));
+            return;
+        }
         boolean allowedPath = checkPath(path);
         if (allowedPath) {
             chain.doFilter(request, response);
@@ -100,9 +106,9 @@ public class SecurityFilter implements Filter {
     private RespResult<Boolean> validate(HttpServletRequest req) {
         try {
             RespResult<Boolean> securityDto = RespUtil.success(Boolean.TRUE);
-            HttpHeadReq headInfo = getHeadInfo(req);
+            HttpHeadReq headInfo = getHeadInfo(req, true);
             if (headInfo == null) {
-                return new RespResult<>(RespLobbyCode.PARAM_ERROR.getCode(), RespLobbyCode.PARAM_ERROR.getMsg(), Boolean.FALSE);
+                return new RespResult<>(RespLobbyCode.HEAD_PARAM_ERROR.getCode(), RespLobbyCode.HEAD_PARAM_ERROR.getMsg(), Boolean.FALSE);
             }
             // 验签
 
@@ -142,7 +148,7 @@ public class SecurityFilter implements Filter {
         response.getOutputStream().close();
     }
 
-    private HttpHeadReq getHeadInfo(HttpServletRequest req) {
+    private HttpHeadReq getHeadInfo(HttpServletRequest req, boolean validToken) {
         String appId = req.getHeader(HttpParamEnum.APPID.getCode());
         String deviceId = req.getHeader(HttpParamEnum.DEVICE_ID.getCode());
         String deviceType = req.getHeader(HttpParamEnum.DEVICE_TYPE.getCode());
@@ -150,6 +156,9 @@ public class SecurityFilter implements Filter {
         String token = req.getHeader(HttpParamEnum.TOKEN.getCode());
         String sign = req.getHeader(HttpParamEnum.REQ_SIGN.getCode());
         String ipAddress = getRemoteAddr(req);
+        if (!validToken) {
+            token = "unValid";
+        }
         LOG.info("Request headInfo appId={}, deviceId={}, deviceType={}, clientVer={}, token={}, sign={}, uri={}, ipAddress={}",
                 appId, deviceId, deviceType, clientVer, token, sign, req.getRequestURI(), ipAddress);
         if (StringUtil.objIsNull(appId, deviceId, deviceType, clientVer, token)) {

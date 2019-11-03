@@ -30,8 +30,8 @@ public enum RespLobbyCode implements RespCode {
     ALREADY_RECEIVE("LOBBY_000011", "You have received a reward for changing the time"),
     //冷却签到时间未到
     UNREACHED_TIME_REPAIR("LOBBY_000012", "Check-in time has not arrived when repair"),
-
-
+    //请求头参数异常
+    HEAD_PARAM_ERROR("LOBBY_000013", "Request header param error"),
 
 
 
