@@ -1,6 +1,9 @@
 package com.bm.lobby.service;
 
+import org.springframework.data.redis.core.ZSetOperations;
+
 import java.util.Map;
+import java.util.Set;
 
 public interface RedisService {
 
@@ -23,4 +26,16 @@ public interface RedisService {
     Map<String, Object> hgetAll(String key);
 
     long hincrBy( String key, String field, long value);
+
+    double incrementScore(String key, String field, long score);
+
+    Set<ZSetOperations.TypedTuple<String>> rangeByScoreWithScores(String key, int min, int max);
+
+    Set<ZSetOperations.TypedTuple<String>> reverseRangeWithScores(String key, int min, int max);
+
+    long zCard(String key);
+
+    long zrank(String key, String field);
+
+    double zScore(String key, String field);
 }

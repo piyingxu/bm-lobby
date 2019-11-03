@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -97,8 +99,76 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public long hincrBy( String key, String field, long value) {
+    public long hincrBy(String key, String field, long value) {
         return redisTemplate.boundHashOps(key).increment(field, value);
     }
 
+    @Override
+    public double incrementScore(String key, String field, long score) {
+        return redisTemplate.boundZSetOps(key).incrementScore(field, score);
+    }
+
+    /**
+     * 从大到小排序
+     * @param key
+     * @param min
+     * @param max
+     * @return
+     */
+    @Override
+    public Set<ZSetOperations.TypedTuple<String>> rangeByScoreWithScores(String key, int min, int max) {
+        return redisTemplate.boundZSetOps(key).rangeWithScores(min, max);
+    }
+
+    /**
+     *  从小到大排序
+     * @param key
+     * @param min
+     * @param max
+     * @return
+     */
+    @Override
+    public Set<ZSetOperations.TypedTuple<String>> reverseRangeWithScores(String key, int min, int max) {
+        return redisTemplate.boundZSetOps(key).reverseRangeWithScores(min, max);
+    }
+
+    /**
+     * 计算集合中元素的数量
+     * @param key
+     * @return
+     */
+    @Override
+    public long zCard(String key) {
+        return redisTemplate.boundZSetOps(key).zCard();
+    }
+
+    /**
+     * 获取field的排名(从大到小)
+     * @param key
+     * @param field
+     * @return
+     */
+    @Override
+    public long zrank(String key, String field) {
+        Long tempRank = redisTemplate.boundZSetOps(key).reverseRank(key);
+        if (tempRank == null) {
+            tempRank = -1l;
+        }
+        return tempRank;
+    }
+
+    /**
+     * 获取field的得分
+     * @param key
+     * @param field
+     * @return
+     */
+    @Override
+    public double zScore(String key, String field) {
+        Double tempScore = redisTemplate.boundZSetOps(key).score(field);
+        if (tempScore == null) {
+            tempScore = 0d;
+        }
+        return tempScore;
+    }
 }

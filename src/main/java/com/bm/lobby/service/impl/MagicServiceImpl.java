@@ -26,6 +26,9 @@ public class MagicServiceImpl implements MagicService {
     public long getOrUpMagic(MagicEnum magic, String pid, long addCount) {
         long newVal = redisService.hincrBy(RedisTableEnum.MAGIC.getCode() + pid, magic.getCode(), addCount);
         LOG.info("getOrUpMagic magic={}, pid={}, addCount={}, newVal={}", magic, pid, addCount, newVal);
+        if (addCount > 0 && magic.getCode() == MagicEnum.GOLD.getCode()) {
+            redisService.incrementScore(RedisTableEnum.RANK_GOLD.getCode(), pid, newVal);
+        }
         return newVal;
     }
 

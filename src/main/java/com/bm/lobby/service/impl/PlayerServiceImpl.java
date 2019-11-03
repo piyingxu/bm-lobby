@@ -22,6 +22,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -232,11 +233,27 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public RespResult<List<RankItemDTO>> getRankList (RankReq req) {
-
-
-
-
-        return RespUtil.success(null);
+        List<RankItemDTO> retList = new ArrayList<>();
+        Set<ZSetOperations.TypedTuple<String>> rank = null;
+        if (req.getType() == RankEnum.GOLD.getCode()) {
+            rank = redisService.reverseRangeWithScores(RedisTableEnum.RANK_GOLD.getCode(), 0 ,99);
+        }
+        if (rank != null) {
+            for (ZSetOperations.TypedTuple<String> field : rank) {
+                String pid = field.getValue();
+                long score = Math.round(field.getScore());
+                RankItemDTO item = new RankItemDTO();
+                item.setPid(pid);
+                item.setScore(score);
+                PlayerInfo playerInfo = playerInfoMapper.selectByPrimaryKey(pid);
+                if (playerInfo != null) {
+                    item.setNickName(playerInfo.getNickName());
+                    item.setHeadUrl(playerInfo.getHeadUrl());
+                }
+                retList.add(item);
+            }
+        }
+        return RespUtil.success(retList);
     }
 
     private String getUserInfo(LoginReq req, LoginRes res) {

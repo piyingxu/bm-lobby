@@ -20,6 +20,8 @@ public enum RedisTableEnum {
 
 	CHECKIN_NEXTTIME("wait_time", "签到冷却时间"),
 
+	RANK_GOLD("game:rank:gold", "排行榜-金币"),
+
 	;
 
 	private String code;
