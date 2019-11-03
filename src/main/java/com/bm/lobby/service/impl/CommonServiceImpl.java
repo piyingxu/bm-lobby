@@ -3,6 +3,7 @@ package com.bm.lobby.service.impl;
 import com.bm.lobby.config.LobbyConfiguration;
 import com.bm.lobby.dto.base.ServiceException;
 import com.bm.lobby.dto.req.HttpHeadReq;
+import com.bm.lobby.dto.res.CheckInDto;
 import com.bm.lobby.enums.HttpParamEnum;
 import com.bm.lobby.enums.MagicEnum;
 import com.bm.lobby.enums.RedisTableEnum;
@@ -20,10 +21,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
 * @author: yingxu.pi@transsnet.com
@@ -88,11 +86,16 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public List<Integer> getCheckInConfig() {
-        List<Integer> hourList = new ArrayList<>();
-        hourList.add(0);hourList.add(4);hourList.add(8);
-        hourList.add(12);hourList.add(16);hourList.add(20);
-        return hourList;
+    public TreeMap<Integer, CheckInDto> getCheckInConfig() {
+        TreeMap<Integer, CheckInDto> hourMap = new TreeMap<>();
+        for (int i=0;i<6;i++) {
+            CheckInDto dto = new CheckInDto();
+            dto.setHour(i*4);
+            dto.setGold(100);
+            dto.setDoubleRate(2);
+            hourMap.put(dto.getHour(), dto);
+        }
+        return hourMap;
     }
 
 

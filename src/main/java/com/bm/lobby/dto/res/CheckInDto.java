@@ -7,19 +7,16 @@ import io.swagger.annotations.ApiModelProperty;
 * @author: yingxu.pi@transsnet.com
 * @date: 2019/10/30 14:54
 */
-public class CheckInRes extends BaseEntity {
+public class CheckInDto extends BaseEntity {
 
     @ApiModelProperty(value = "时间点", example = "20")
     private int hour;
 
-    @ApiModelProperty(value = "状态：0-不可领取(时间未到)；1-可领取(正点)；2-可领取(超点-补签)；3-已领取", example = "2")
-    private int status;
-
     @ApiModelProperty(value = "奖励的金币", example = "100")
     private long gold;
 
-    @ApiModelProperty(value = "可补签等待时间(秒)", example = "180")
-    private long waitTime;
+    @ApiModelProperty(value = "翻倍比率", example = "2")
+    private int doubleRate;
 
     public int getHour() {
         return hour;
@@ -27,14 +24,6 @@ public class CheckInRes extends BaseEntity {
 
     public void setHour(int hour) {
         this.hour = hour;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 
     public long getGold() {
@@ -45,12 +34,11 @@ public class CheckInRes extends BaseEntity {
         this.gold = gold;
     }
 
-    public long getWaitTime() {
-        return waitTime;
+    public int getDoubleRate() {
+        return doubleRate;
     }
 
-    public void setWaitTime(long waitTime) {
-        this.waitTime = waitTime;
+    public void setDoubleRate(int doubleRate) {
+        this.doubleRate = doubleRate;
     }
-
 }

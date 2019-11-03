@@ -44,4 +44,20 @@ public class ThirdPartServiceImpl implements ThirdPartService {
         return ret;
     }
 
+    @Override
+    public Map<String, Object> getQqAccessToken(String code) {
+        String url = lobbyConfiguration.getQqUrl() + "oauth2.0/me?access_token=" + code;
+        String result = restTemplate.getForObject(url, String.class);
+        Map<String, Object> ret = GsonUtils.fromJson2Object(result, Map.class);
+        return ret;
+    }
+
+    @Override
+    public Map<String, Object> getQqUserInfo(String accessToken, String openId) {
+        String url = lobbyConfiguration.getQqUrl() + "/user/get_user_info?access_token="+accessToken+"&oauth_consumer_key="+lobbyConfiguration.getQqAppid()+"&openid=" + openId;
+        String result = restTemplate.getForObject(url, String.class);
+        Map<String, Object> ret = GsonUtils.fromJson2Object(result, Map.class);
+        return ret;
+    }
+
 }

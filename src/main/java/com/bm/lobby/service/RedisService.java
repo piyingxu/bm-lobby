@@ -14,7 +14,7 @@ public interface RedisService {
 
     Long getIncr(String key);
 
-    void put (String key, String field, String val);
+    void hput (String key, String field, String val);
 
     String hget(String key, String field);
 

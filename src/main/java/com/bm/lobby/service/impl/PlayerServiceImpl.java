@@ -9,17 +9,17 @@ import com.bm.lobby.dto.base.ServiceException;
 import com.bm.lobby.dto.req.CheckInAwardReq;
 import com.bm.lobby.dto.req.HttpHeadReq;
 import com.bm.lobby.dto.req.LoginReq;
-import com.bm.lobby.dto.res.CheckInAwardRes;
-import com.bm.lobby.dto.res.CheckInRes;
-import com.bm.lobby.dto.res.GameDto;
-import com.bm.lobby.dto.res.LoginRes;
+import com.bm.lobby.dto.req.RankReq;
+import com.bm.lobby.dto.res.*;
 import com.bm.lobby.enums.*;
 import com.bm.lobby.model.GameConfig;
 import com.bm.lobby.model.PlayerInfo;
 import com.bm.lobby.service.*;
 import com.bm.lobby.util.BeanUtilsCopy;
 import com.bm.lobby.util.DateUtil;
+import com.bm.lobby.util.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -130,29 +130,32 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public RespResult<List<CheckInRes>> getCheckInStatus () {
-        List<Integer> hourList = commonService.getCheckInConfig();
+        TreeMap<Integer, CheckInDto> checkInConfig = commonService.getCheckInConfig();
         String pid = commonService.getCurrPid();
-        Map<String, Object> checkInMap =redisService.hgetAll(RedisTableEnum.getCheckInKey(pid));
-        if (checkInMap == null || checkInMap.size() == 0) {
-            checkInMap = new HashMap<>();
-            for (Integer hour:hourList) {
-                checkInMap.put(String.valueOf(hour), "0");
+        Map<String, Object> checkInStatusMap =redisService.hgetAll(RedisTableEnum.getCheckInKey(pid));
+        if (checkInStatusMap == null || checkInStatusMap.size() == 0) {
+            checkInStatusMap = new HashMap<>();
+            for (CheckInDto hour:checkInConfig.values()) {
+                checkInStatusMap.put(String.valueOf(hour.getHour()), CheckInStatusEnum.UNREACHED_TIME.getCode());
             }
             // 本日初始化
-            redisService.putAll(RedisTableEnum.getCheckInKey(pid), checkInMap, 60*60*24*2);
+            redisService.putAll(RedisTableEnum.getCheckInKey(pid), checkInStatusMap, 60*60*24*2);
         }
-        // 因为key的数据类型不一样，整数才能排序正确
-        Map<Integer, Object> sortedCheckInMap = new TreeMap<Integer, Object>();
-        for (String tempkey:checkInMap.keySet()) {
-            sortedCheckInMap.put(Integer.parseInt(tempkey), checkInMap.get(tempkey));
+        String waitTimeDb = redisService.hget(RedisTableEnum.getCheckInKey(pid), RedisTableEnum.CHECKIN_NEXTTIME.getCode());
+        long waitTime = 0;
+        if (StringUtils.isNotEmpty(waitTimeDb) && Long.parseLong(waitTimeDb) > System.currentTimeMillis()) {
+            waitTime = (Long.parseLong(waitTimeDb) - System.currentTimeMillis())/1000;
         }
         List<CheckInRes> retArr = new ArrayList<>();
-        for (Integer timeHour:sortedCheckInMap.keySet()) {
-            String val = String.valueOf(sortedCheckInMap.get(timeHour));
+        for (Integer timeHour:checkInConfig.keySet()) {
+            CheckInDto checkInDto = checkInConfig.get(timeHour);
             int timeHour_next = timeHour + 4;
             CheckInRes checkInRes = new CheckInRes();
             checkInRes.setHour(timeHour);
-            if ("0".equals(val)) {
+            checkInRes.setGold(checkInDto.getGold());
+            checkInRes.setWaitTime(waitTime);
+            String dbStatus = String.valueOf(checkInStatusMap.get(String.valueOf(timeHour)));
+            if ("0".equals(dbStatus)) {
                 // 未领取
                 if (DateUtil.getHour() < timeHour) {
                     // 未到点
@@ -163,6 +166,7 @@ public class PlayerServiceImpl implements PlayerService {
                 } else {
                     // 超点-可补签
                     checkInRes.setStatus(CheckInStatusEnum.REISSUE_CAN.getCode());
+                    checkInRes.setGold(checkInRes.getGold() * checkInDto.getDoubleRate());
                 }
             } else {
                 // 可领取
@@ -173,18 +177,67 @@ public class PlayerServiceImpl implements PlayerService {
         return RespUtil.success(retArr);
     }
 
+    @Override
     public RespResult<CheckInAwardRes> getCheckInAward (CheckInAwardReq req) {
-        List<Integer> hourList = commonService.getCheckInConfig();
-
-
-
-
+        TreeMap<Integer, CheckInDto> checkInConfig = commonService.getCheckInConfig();
+        if (!checkInConfig.containsKey(req.getHour())) {
+            throw new ServiceException(RespLobbyCode.PARAM_ERROR);
+        }
         String pid = commonService.getCurrPid();
-        long gold =  magicService.getOrUpMagic(MagicEnum.GOLD, pid, 0);
-        return RespUtil.success(null);
+        String dbStatus = redisService.hget(RedisTableEnum.getCheckInKey(pid), String.valueOf(req.getHour()));
+        int currStatus = Integer.parseInt(dbStatus);
+        if (currStatus == CheckInStatusEnum.ALREADY_RECEIVE.getCode()) {
+            throw new ServiceException(RespLobbyCode.ALREADY_RECEIVE);
+        }
+        boolean repair = false;
+        if (currStatus == CheckInStatusEnum.UNREACHED_TIME.getCode()) {
+            int timeHour_next = req.getHour() + 4;
+            if (DateUtil.getHour() < req.getHour()) {
+                throw new ServiceException(RespLobbyCode.UNREACHED_TIME);
+            }
+            if (DateUtil.getHour() >= timeHour_next) {
+                // 超点补签
+                repair = true;
+            }
+        }
+        //判断是否冷却时间内
+        String waitTimeDb = redisService.hget(RedisTableEnum.getCheckInKey(pid), RedisTableEnum.CHECKIN_NEXTTIME.getCode());
+        long waitTime = 0;
+        if (StringUtils.isNotEmpty(waitTimeDb) && Long.parseLong(waitTimeDb) > System.currentTimeMillis()) {
+            if (repair) {
+                throw new ServiceException(RespLobbyCode.UNREACHED_TIME_REPAIR);
+            } else {
+                //非补签的情况下，补签的倒计时继续
+                waitTime = (Long.parseLong(waitTimeDb) - System.currentTimeMillis())/1000;
+            }
+        }
+        CheckInDto checkInDto = checkInConfig.get(req.getHour());
+        long award = checkInDto.getGold();
+        if (req.getWatchAd() == 1) {
+            award = award * checkInDto.getDoubleRate();
+        }
+        redisService.hput(RedisTableEnum.getCheckInKey(pid), String.valueOf(req.getHour()), String.valueOf(CheckInStatusEnum.ALREADY_RECEIVE.getCode()));
+        magicService.getOrUpMagic(MagicEnum.GOLD, pid, award);
+        if (repair) {
+            // 重新设置冷却时间
+            waitTime = lobbyConfiguration.getCheckInWaitime();
+            long nextTime = System.currentTimeMillis() + waitTime * 1000;
+            redisService.hput(RedisTableEnum.getCheckInKey(pid), RedisTableEnum.CHECKIN_NEXTTIME.getCode(), String.valueOf(nextTime));
+        }
+        CheckInAwardRes checkInAwardRes = new CheckInAwardRes();
+        checkInAwardRes.setGold(award);
+        checkInAwardRes.setWaitTime(waitTime);
+        return RespUtil.success(checkInAwardRes);
     }
 
+    @Override
+    public RespResult<List<RankItemDTO>> getRankList (RankReq req) {
 
+
+
+
+        return RespUtil.success(null);
+    }
 
     private String getUserInfo(LoginReq req, LoginRes res) {
         /*Map<String, Object> wxAccessToken = thirdPartService.getWxAccessToken(req.getAuthToken());

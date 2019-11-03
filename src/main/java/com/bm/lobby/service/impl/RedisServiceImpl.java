@@ -70,7 +70,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void put(String key, String field, String val) {
+    public void hput(String key, String field, String val) {
         BoundHashOperations<String, String, String> ops = redisTemplate.boundHashOps(key);
         ops.put(field, val);
     }

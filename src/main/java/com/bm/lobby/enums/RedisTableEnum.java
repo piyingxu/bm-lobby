@@ -18,6 +18,8 @@ public enum RedisTableEnum {
 
 	CHECKIN("game:player:checkIn:", "签到"),
 
+	CHECKIN_NEXTTIME("wait_time", "签到冷却时间"),
+
 	;
 
 	private String code;

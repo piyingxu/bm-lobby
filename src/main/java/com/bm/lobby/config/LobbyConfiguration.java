@@ -54,11 +54,23 @@ public class LobbyConfiguration {
     @Value("${lobby.wx.appscret}")
     private String wxAppscret;
 
+    @Value("${lobby.qq.url}")
+    private String qqUrl;
+
+    @Value("${lobby.qq.appid}")
+    private String qqAppid;
+
+    @Value("${lobby.qq.appscret}")
+    private String qqAppscret;
+
     @Value("${lobby.token.valid.time:2592000}")
     private long token_valid_time;
 
     @Value("${lobby.player.startid:1000000}")
     private long playerStartId;
+
+    @Value("${lobby.checkin.waitime:180}")
+    private long checkInWaitime;
 
     @Bean
     @Primary
@@ -190,6 +202,30 @@ public class LobbyConfiguration {
         this.wxAppscret = wxAppscret;
     }
 
+    public String getQqUrl() {
+        return qqUrl;
+    }
+
+    public void setQqUrl(String qqUrl) {
+        this.qqUrl = qqUrl;
+    }
+
+    public String getQqAppid() {
+        return qqAppid;
+    }
+
+    public void setQqAppid(String qqAppid) {
+        this.qqAppid = qqAppid;
+    }
+
+    public String getQqAppscret() {
+        return qqAppscret;
+    }
+
+    public void setQqAppscret(String qqAppscret) {
+        this.qqAppscret = qqAppscret;
+    }
+
     public long getToken_valid_time() {
         return token_valid_time;
     }
@@ -204,5 +240,13 @@ public class LobbyConfiguration {
 
     public void setPlayerStartId(long playerStartId) {
         this.playerStartId = playerStartId;
+    }
+
+    public long getCheckInWaitime() {
+        return checkInWaitime;
+    }
+
+    public void setCheckInWaitime(long checkInWaitime) {
+        this.checkInWaitime = checkInWaitime;
     }
 }

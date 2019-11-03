@@ -1,9 +1,13 @@
 package com.bm.lobby.web;
 
 import com.bm.lobby.dto.base.RespResult;
+import com.bm.lobby.dto.req.CheckInAwardReq;
 import com.bm.lobby.dto.req.LoginReq;
+import com.bm.lobby.dto.req.RankReq;
+import com.bm.lobby.dto.res.CheckInAwardRes;
 import com.bm.lobby.dto.res.CheckInRes;
 import com.bm.lobby.dto.res.LoginRes;
+import com.bm.lobby.dto.res.RankItemDTO;
 import com.bm.lobby.service.PlayerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
-@Api(description = "大厅相关接口", tags = "Lobby")
+@Api(description = "玩家相关接口", tags = "PLAYER")
 @RestController
 @RequestMapping("/api/lobby/player")
 public class PlayerController {
@@ -39,8 +43,21 @@ public class PlayerController {
     }
 
     @ApiOperation("4、获取签到状态列表")
-    @PostMapping("getCheckInStatus")
+    @GetMapping("getCheckInStatus")
     public RespResult<List<CheckInRes>> getCheckInStatus() {
         return playerService.getCheckInStatus();
     }
+
+    @ApiOperation("5、领取签到奖励")
+    @PostMapping("getCheckInAward")
+    public RespResult<CheckInAwardRes> getCheckInAward(@RequestBody CheckInAwardReq req) {
+        return playerService.getCheckInAward(req);
+    }
+
+    @ApiOperation("6、获取排行榜信息")
+    @PostMapping("getRankList")
+    public RespResult<List<RankItemDTO>> getRankList(@RequestBody RankReq req) {
+        return playerService.getRankList(req);
+    }
+
 }
