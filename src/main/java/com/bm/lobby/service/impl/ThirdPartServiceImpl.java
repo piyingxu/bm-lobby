@@ -6,8 +6,8 @@ import com.bm.lobby.util.BmRestTemplate;
 import com.bm.lobby.util.GsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -21,7 +21,7 @@ public class ThirdPartServiceImpl implements ThirdPartService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThirdPartServiceImpl.class);
 
-    @Resource
+    @Autowired
     private BmRestTemplate restTemplate;
 
     @Resource
