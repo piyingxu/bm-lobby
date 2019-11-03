@@ -65,7 +65,10 @@ public class LogAspect {
             logger.warn("<=====请求参数json转化异常");
         }
         Object obj = null;
-        String pid = commonService.getCurrPid();
+        String pid = null;
+        if (!methodName.equals("login")) {
+            pid = commonService.getCurrPid();
+        }
         if (api != null) {
             apidesc = api.value();
             logger.info("=====>类名：[{}]，方法：[{}],描述：[{}]，请求参数req:{}, pid:{}", className, methodName, apidesc, paramsStr, pid);

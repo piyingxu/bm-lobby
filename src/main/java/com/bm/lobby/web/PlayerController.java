@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 @Api(description = "玩家相关接口", tags = "PLAYER")
@@ -26,7 +27,7 @@ public class PlayerController {
 
     @ApiOperation("1、登录")
     @PostMapping("login")
-    public RespResult<LoginRes> login(@RequestBody LoginReq req) {
+    public RespResult<LoginRes> login(@RequestBody @Valid LoginReq req) {
         return playerService.login(req);
     }
 
@@ -56,7 +57,7 @@ public class PlayerController {
 
     @ApiOperation("6、获取排行榜信息")
     @PostMapping("getRankList")
-    public RespResult<List<RankItemDTO>> getRankList(@RequestBody RankReq req) {
+    public RespResult<List<RankItemDTO>> getRankList(@RequestBody @Valid RankReq req) {
         return playerService.getRankList(req);
     }
 

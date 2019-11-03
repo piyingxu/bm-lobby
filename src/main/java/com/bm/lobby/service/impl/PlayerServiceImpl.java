@@ -259,19 +259,20 @@ public class PlayerServiceImpl implements PlayerService {
     private String getUserInfo(LoginReq req, LoginRes res) {
         Map<String, Object> wxAccessToken = thirdPartService.getWxAccessToken(req.getAuthToken());
         Object wxATErrorCode = wxAccessToken.get("errcode");
+        Object wxErrmsg = wxAccessToken.get("errmsg");
         if (wxATErrorCode != null) {
-            throw new ServiceException(RespLobbyCode.AUTH_ERROR.getCode(), String.valueOf(wxATErrorCode));
+            throw new ServiceException(RespLobbyCode.AUTH_ERROR.getCode(), String.valueOf(wxErrmsg));
         }
         String accessToken = String.valueOf(wxAccessToken.get("access_token"));
         String openId = String.valueOf(wxAccessToken.get("openid"));
         if (StringUtil.objIsNull(openId, accessToken)) {
-            throw new ServiceException(RespLobbyCode.AUTH_ERROR.getCode(), String.valueOf(wxATErrorCode));
+            throw new ServiceException(RespLobbyCode.AUTH_ERROR);
         }
         Map<String, Object> wxUserInfo = thirdPartService.getWxUserInfo(accessToken, openId);
         Object nickNameObj = wxUserInfo.get("nickname");
         Object headImgUrlObj = wxUserInfo.get("headimgurl");
         if (StringUtil.objIsNull(nickNameObj, headImgUrlObj)) {
-            throw new ServiceException(RespLobbyCode.AUTH_ERROR.getCode(), String.valueOf(wxATErrorCode));
+            throw new ServiceException(RespLobbyCode.AUTH_ERROR);
         }
         res.setNickName(String.valueOf(nickNameObj));
         res.setHeadUrl(String.valueOf(headImgUrlObj));

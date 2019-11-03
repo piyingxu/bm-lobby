@@ -42,7 +42,7 @@ public class BmRestTemplate extends RestTemplate {
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
         try {
             log.info("=======>httpExchange访问,url：{},httpEntity:{},url参数：{}",url,requestEntity,uriVariables);
-            ResponseEntity<T> entity = exchange(url, HttpMethod.GET,requestEntity,responseType,uriVariables);
+            ResponseEntity<T> entity = super.exchange(url, HttpMethod.GET,requestEntity,responseType,uriVariables);
             log.info("=======>httpExchange访问,url：{},响应结果：{}",url,GsonUtils.fromObject2Json(entity));
             return entity;
         } catch (Exception e) {
@@ -71,9 +71,9 @@ public class BmRestTemplate extends RestTemplate {
             log.info("=======>httpExchange访问,url：{},httpEntity:{},url参数：{}",url,requestEntity,uriVariables);
             ResponseEntity<T> entity;
             if (uriVariables != null){
-                entity = exchange(url,HttpMethod.GET,requestEntity,responseType,uriVariables);
+                entity = super.exchange(url,HttpMethod.GET,requestEntity,responseType,uriVariables);
             }else{
-                entity = exchange(url,HttpMethod.GET,requestEntity,responseType);
+                entity = super.exchange(url,HttpMethod.GET,requestEntity,responseType);
             }
             log.info("=======>httpExchange访问,url：{},响应结果：{}",url,GsonUtils.fromObject2Json(entity));
             return entity;
@@ -100,7 +100,7 @@ public class BmRestTemplate extends RestTemplate {
     public <T> ResponseEntity<T> getForEntity(String url, Class<T> responseType, Object... uriVariables)  {
         try {
             log.info("=====>httpGet访问,url：{},url参数:{}",url,uriVariables);
-            ResponseEntity<T> entity = getForEntity(url,responseType,uriVariables);
+            ResponseEntity<T> entity = super.getForEntity(url,responseType,uriVariables);
             log.info("=====>httpGet访问,url：{},响应结果：{}",url,GsonUtils.fromObject2Json(entity));
             return entity;
         } catch (Exception e) {
@@ -125,7 +125,7 @@ public class BmRestTemplate extends RestTemplate {
     public <T> ResponseEntity<T> getForEntity(String url, Class<T> responseType, Map<String, ?> uriVariables)  {
         try {
             log.info("======>httpGet访问,url：{},url参数:{}",url,uriVariables);
-            ResponseEntity<T> entity = getForEntity(url,responseType,uriVariables);
+            ResponseEntity<T> entity = super.getForEntity(url,responseType,uriVariables);
             log.info("======>httpGet访问,url：{},响应结果：{}",url,GsonUtils.fromObject2Json(entity));
             return entity;
         } catch (Exception e) {
@@ -151,7 +151,7 @@ public class BmRestTemplate extends RestTemplate {
     public <T> ResponseEntity<T> postForEntity(String url, Object request, Class<T> responseType, Object... uriVariables) {
         try {
             log.info("=====>httpPost访问,url：{},请求参数:{},url参数:{}",url,GsonUtils.fromObject2Json(request),uriVariables);
-            ResponseEntity<T> entity = postForEntity(url,request,responseType,uriVariables);
+            ResponseEntity<T> entity = super.postForEntity(url,request,responseType,uriVariables);
             log.info("=====>httpPost访问,url：{},响应结果：{}",url,GsonUtils.fromObject2Json(entity));
             return entity;
         }catch (ServiceException se){
@@ -179,7 +179,7 @@ public class BmRestTemplate extends RestTemplate {
     public <T> ResponseEntity<T> postForEntity(String url, Object request, Class<T> responseType, Map<String, ?> uriVariables) {
         try {
             log.info("======>httpPost访问,url：{},请求参数:{},url参数:{}",url,GsonUtils.fromObject2Json(request),uriVariables);
-            ResponseEntity<T> entity = postForEntity(url,request,responseType,uriVariables);
+            ResponseEntity<T> entity = super.postForEntity(url,request,responseType,uriVariables);
             log.info("======>httpPost访问,url：{},响应结果：{}",url,GsonUtils.fromObject2Json(entity));
             return entity;
         }catch (Exception e) {

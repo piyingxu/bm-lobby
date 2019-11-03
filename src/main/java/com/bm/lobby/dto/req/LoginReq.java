@@ -3,6 +3,7 @@ package com.bm.lobby.dto.req;
 import com.bm.lobby.dto.base.BaseEntity;
 import com.bm.lobby.dto.base.PageBaseParam;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
 * @author: yingxu.pi@transsnet.com
@@ -10,9 +11,11 @@ import io.swagger.annotations.ApiModelProperty;
 */
 public class LoginReq extends BaseEntity {
 
+    @NotBlank(message = "AuthType can not be null")
     @ApiModelProperty(value = "第三方认证类型：1-QQ 2-weichat", example = "2")
     private String authType;
 
+    @NotBlank(message = "AuthToken can not be null")
     @ApiModelProperty(value = "第三方授权token", example = "4578954")
     private String authToken;
 
