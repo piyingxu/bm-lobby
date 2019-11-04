@@ -137,7 +137,7 @@ public class PlayerServiceImpl implements PlayerService {
         if (checkInStatusMap == null || checkInStatusMap.size() == 0) {
             checkInStatusMap = new HashMap<>();
             for (CheckInDto hour:checkInConfig.values()) {
-                checkInStatusMap.put(String.valueOf(hour.getHour()), CheckInStatusEnum.UNREACHED_TIME.getCode());
+                checkInStatusMap.put(String.valueOf(hour.getHour()), String.valueOf(CheckInStatusEnum.UNREACHED_TIME.getCode()));
             }
             // 本日初始化
             redisService.putAll(RedisTableEnum.getCheckInKey(pid), checkInStatusMap, 60*60*24*2);
