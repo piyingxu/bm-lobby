@@ -257,7 +257,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     private String getUserInfo(LoginReq req, LoginRes res) {
-        Map<String, Object> wxAccessToken = thirdPartService.getWxAccessToken(req.getAuthToken());
+        /*Map<String, Object> wxAccessToken = thirdPartService.getWxAccessToken(req.getAuthToken());
         Object wxATErrorCode = wxAccessToken.get("errcode");
         Object wxErrmsg = wxAccessToken.get("errmsg");
         if (wxATErrorCode != null) {
@@ -275,8 +275,12 @@ public class PlayerServiceImpl implements PlayerService {
             throw new ServiceException(RespLobbyCode.AUTH_ERROR);
         }
         res.setNickName(String.valueOf(nickNameObj));
-        res.setHeadUrl(String.valueOf(headImgUrlObj));
-        return openId;
+        res.setHeadUrl(String.valueOf(headImgUrlObj));*/
+
+        res.setNickName(String.valueOf("zhangheng"));
+        res.setHeadUrl(String.valueOf("http://xxx"));
+
+        return "1572506157813";
     }
 
 
