@@ -4,10 +4,8 @@ import com.bm.lobby.dto.base.RespResult;
 import com.bm.lobby.dto.req.CheckInAwardReq;
 import com.bm.lobby.dto.req.LoginReq;
 import com.bm.lobby.dto.req.RankReq;
-import com.bm.lobby.dto.res.CheckInAwardRes;
-import com.bm.lobby.dto.res.CheckInRes;
-import com.bm.lobby.dto.res.LoginRes;
-import com.bm.lobby.dto.res.RankItemDTO;
+import com.bm.lobby.dto.req.WithDrawReq;
+import com.bm.lobby.dto.res.*;
 
 import java.util.List;
 
@@ -28,6 +26,10 @@ public interface PlayerService {
 
     RespResult<CheckInAwardRes> getCheckInAward (CheckInAwardReq req);
 
-    RespResult<List<RankItemDTO>> getRankList (RankReq req);
+    RespResult<RankRes> getRankList (RankReq req);
+
+    RespResult<PlayerInfoRes> getUserInfo();
+
+    RespResult<Void> withDraw(WithDrawReq req);
 
 }

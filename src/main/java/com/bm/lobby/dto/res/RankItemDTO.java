@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class RankItemDTO extends BaseEntity {
 
+    @ApiModelProperty(value = "排行：-1 代表未上榜", example = "1")
+    private int top;
+
     @ApiModelProperty(value = "玩家id", example = "10000001")
     private String pid;
 
@@ -16,6 +19,14 @@ public class RankItemDTO extends BaseEntity {
 
     @ApiModelProperty(value = "分值", example = "10003")
     private long score;
+
+    public int getTop() {
+        return top;
+    }
+
+    public void setTop(int top) {
+        this.top = top;
+    }
 
     public String getPid() {
         return pid;

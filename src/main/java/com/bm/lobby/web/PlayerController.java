@@ -4,10 +4,8 @@ import com.bm.lobby.dto.base.RespResult;
 import com.bm.lobby.dto.req.CheckInAwardReq;
 import com.bm.lobby.dto.req.LoginReq;
 import com.bm.lobby.dto.req.RankReq;
-import com.bm.lobby.dto.res.CheckInAwardRes;
-import com.bm.lobby.dto.res.CheckInRes;
-import com.bm.lobby.dto.res.LoginRes;
-import com.bm.lobby.dto.res.RankItemDTO;
+import com.bm.lobby.dto.req.WithDrawReq;
+import com.bm.lobby.dto.res.*;
 import com.bm.lobby.service.PlayerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -57,8 +55,20 @@ public class PlayerController {
 
     @ApiOperation("6、获取排行榜信息")
     @PostMapping("getRankList")
-    public RespResult<List<RankItemDTO>> getRankList(@RequestBody @Valid RankReq req) {
+    public RespResult<RankRes> getRankList(@RequestBody @Valid RankReq req) {
         return playerService.getRankList(req);
+    }
+
+    @ApiOperation("7、获取用户个人信息")
+    @GetMapping("getPlayerInfo")
+    public RespResult<PlayerInfoRes> getUserInfo() {
+        return playerService.getUserInfo();
+    }
+
+    @ApiOperation("8、申请提现")
+    @PostMapping("withDraw")
+    public RespResult<Void> withDraw(@RequestBody @Valid WithDrawReq req) {
+        return playerService.withDraw(req);
     }
 
 }

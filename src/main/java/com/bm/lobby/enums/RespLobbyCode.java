@@ -32,8 +32,10 @@ public enum RespLobbyCode implements RespCode {
     UNREACHED_TIME_REPAIR("LOBBY_000012", "Check-in time has not arrived when repair"),
     //请求头参数异常
     HEAD_PARAM_ERROR("LOBBY_000013", "Request header param error"),
-
-
+    //玩家信息不存在
+    PLAYER_UNEXIST("LOBBY_000014", "Player does not exist"),
+    //提现发起失败
+    WITHDRAW_FAIL("LOBBY_000015", "Withdraw failure"),
 
 
     MAX("LOBBY_999999", "Max");

@@ -3,20 +3,20 @@ package com.bm.lobby.service.impl;
 import com.bm.lobby.config.LobbyConfiguration;
 import com.bm.lobby.dao.GameConfigMapper;
 import com.bm.lobby.dao.PlayerInfoMapper;
+import com.bm.lobby.dao.WithdrawOrderMapper;
 import com.bm.lobby.dto.base.RespResult;
 import com.bm.lobby.dto.base.RespUtil;
 import com.bm.lobby.dto.base.ServiceException;
-import com.bm.lobby.dto.req.CheckInAwardReq;
-import com.bm.lobby.dto.req.HttpHeadReq;
-import com.bm.lobby.dto.req.LoginReq;
-import com.bm.lobby.dto.req.RankReq;
+import com.bm.lobby.dto.req.*;
 import com.bm.lobby.dto.res.*;
 import com.bm.lobby.enums.*;
 import com.bm.lobby.model.GameConfig;
 import com.bm.lobby.model.PlayerInfo;
+import com.bm.lobby.model.WithdrawOrder;
 import com.bm.lobby.service.*;
 import com.bm.lobby.util.BeanUtilsCopy;
 import com.bm.lobby.util.DateUtil;
+import com.bm.lobby.util.RandomUtils;
 import com.bm.lobby.util.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -44,6 +44,9 @@ public class PlayerServiceImpl implements PlayerService {
     private GameConfigMapper gameConfigMapper;
 
     @Resource
+    private WithdrawOrderMapper withdrawOrderMapper;
+
+    @Resource
     private ThirdPartService thirdPartService;
 
     @Resource
@@ -67,7 +70,7 @@ public class PlayerServiceImpl implements PlayerService {
         HttpHeadReq httpHeadReq = commonService.getHeadParam();
         LoginRes loginRes = new LoginRes();
         // 获取第三方昵称和头像信息
-        String authId = getUserInfo(req, loginRes);
+        String authId = getThirdUserInfo(req, loginRes);
         String playerId = null;
         // 关联playerId
         PlayerInfo playerInfo = playerInfoMapper.selectByPrimaryKey(authId);
@@ -232,17 +235,23 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public RespResult<List<RankItemDTO>> getRankList (RankReq req) {
+    public RespResult<RankRes> getRankList (RankReq req) {
         List<RankItemDTO> retList = new ArrayList<>();
+        RankRes ret = new RankRes();
+        RankItemDTO mine = new RankItemDTO();
+        ret.setRankList(retList);
+        ret.setMine(mine);
         Set<ZSetOperations.TypedTuple<String>> rank = null;
         if (req.getType() == RankEnum.GOLD.getCode()) {
             rank = redisService.reverseRangeWithScores(RedisTableEnum.RANK_GOLD.getCode(), 0 ,99);
         }
         if (rank != null) {
+            int top = 1;
             for (ZSetOperations.TypedTuple<String> field : rank) {
                 String pid = field.getValue();
                 long score = Math.round(field.getScore());
                 RankItemDTO item = new RankItemDTO();
+                item.setTop(top);
                 item.setPid(pid);
                 item.setScore(score);
                 PlayerInfo playerInfo = playerInfoMapper.selectByPrimaryKey(pid);
@@ -253,10 +262,55 @@ public class PlayerServiceImpl implements PlayerService {
                 retList.add(item);
             }
         }
-        return RespUtil.success(retList);
+        String pid = commonService.getCurrPid();
+        PlayerInfo playerInfo = playerInfoMapper.selectByPrimaryKey(pid);
+        long top = redisService.zrank(RedisTableEnum.RANK_GOLD.getCode(), pid);
+        double score = redisService.zScore(RedisTableEnum.RANK_GOLD.getCode(), pid);
+        mine.setTop((int)top);
+        mine.setPid(pid);
+        mine.setScore(Math.round(score));
+        PlayerInfo minePlayerInfo = playerInfoMapper.selectByPrimaryKey(pid);
+        if (minePlayerInfo != null) {
+            mine.setNickName(minePlayerInfo.getNickName());
+            mine.setHeadUrl(minePlayerInfo.getHeadUrl());
+        }
+        return RespUtil.success(ret);
     }
 
-    private String getUserInfo(LoginReq req, LoginRes res) {
+    @Override
+    public RespResult<PlayerInfoRes> getUserInfo() {
+        String pid = commonService.getCurrPid();
+        PlayerInfo playerInfo = playerInfoMapper.selectByPrimaryKey(pid);
+        if (playerInfo == null) {
+            throw new ServiceException(RespLobbyCode.PLAYER_UNEXIST);
+        }
+        PlayerInfoRes ret = new PlayerInfoRes();
+        BeanUtilsCopy.copyProperties(playerInfo, ret);
+        long gold =  magicService.getOrUpMagic(MagicEnum.GOLD, pid, 0);
+        ret.setPid(pid);
+        ret.setGold(gold);
+        return RespUtil.success(ret);
+    }
+
+    @Override
+    public RespResult<Void> withDraw(WithDrawReq req) {
+        String pid = commonService.getCurrPid();
+        WithdrawOrder order = new WithdrawOrder();
+        BeanUtilsCopy.copyProperties(req, order);
+        order.setOrderNo(RandomUtils.getBusinessOrderId(BusinessTypeEnum.WITHDRAW));
+        order.setPlayerId(pid);
+        int ret = withdrawOrderMapper.insert(order);
+        if (ret == 1) {
+            return RespUtil.success(null);
+        }
+        throw new ServiceException(RespLobbyCode.WITHDRAW_FAIL);
+    }
+
+
+
+
+
+    private String getThirdUserInfo(LoginReq req, LoginRes res) {
         /*Map<String, Object> wxAccessToken = thirdPartService.getWxAccessToken(req.getAuthToken());
         Object wxATErrorCode = wxAccessToken.get("errcode");
         Object wxErrmsg = wxAccessToken.get("errmsg");

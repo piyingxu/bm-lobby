@@ -31,3 +31,21 @@ create table t_game_config (
   update_time timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
   PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='游戏配置信息表';
+
+drop table if exists t_withdraw_order;
+create table t_withdraw_order (
+  id bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  player_id varchar(100) NOT NULL COMMENT '玩家id',
+  order_no varchar(100) NOT NULL COMMENT '订单号',
+  channel int(11) NOT NULL  COMMENT '渠道：1-微信 2-支付宝',
+  account_num varchar(100) NOT NULL COMMENT '账号',
+  account_name varchar(100) NOT NULL COMMENT '账号名称',
+  amount int(11)  NOT NULL COMMENT '金额：单位分',
+  status int(11) DEFAULT 1 COMMENT '状态：1-审核中 2-成功  3-失败',
+  remark varchar(1000) NOT NULL COMMENT '订单号',
+  create_time timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+  update_time timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
+  UNIQUE KEY idx_player_id (player_id),
+  UNIQUE KEY idx_order_no (order_no),
+  PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='提现订单信息表';
