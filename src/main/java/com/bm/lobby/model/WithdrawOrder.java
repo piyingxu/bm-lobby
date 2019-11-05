@@ -113,4 +113,7 @@ public class WithdrawOrder extends BaseEntity {
         this.updateTime = updateTime;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
 }

@@ -4,9 +4,7 @@ import com.bm.lobby.config.LobbyConfiguration;
 import com.bm.lobby.dao.GameConfigMapper;
 import com.bm.lobby.dao.PlayerInfoMapper;
 import com.bm.lobby.dao.WithdrawOrderMapper;
-import com.bm.lobby.dto.base.RespResult;
-import com.bm.lobby.dto.base.RespUtil;
-import com.bm.lobby.dto.base.ServiceException;
+import com.bm.lobby.dto.base.*;
 import com.bm.lobby.dto.req.*;
 import com.bm.lobby.dto.res.*;
 import com.bm.lobby.enums.*;
@@ -18,6 +16,8 @@ import com.bm.lobby.util.BeanUtilsCopy;
 import com.bm.lobby.util.DateUtil;
 import com.bm.lobby.util.RandomUtils;
 import com.bm.lobby.util.StringUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -189,6 +189,9 @@ public class PlayerServiceImpl implements PlayerService {
         }
         String pid = commonService.getCurrPid();
         String dbStatus = redisService.hget(RedisTableEnum.getCheckInKey(pid), String.valueOf(req.getHour()));
+        if (StringUtils.isEmpty(dbStatus)) {
+            throw new ServiceException(RespLobbyCode.ALREADY_RECEIVE);
+        }
         int currStatus = Integer.parseInt(dbStatus);
         if (currStatus == CheckInStatusEnum.ALREADY_RECEIVE.getCode()) {
             throw new ServiceException(RespLobbyCode.ALREADY_RECEIVE);
@@ -297,7 +300,13 @@ public class PlayerServiceImpl implements PlayerService {
         String pid = commonService.getCurrPid();
         WithdrawOrder order = new WithdrawOrder();
         BeanUtilsCopy.copyProperties(req, order);
-        order.setOrderNo(RandomUtils.getBusinessOrderId(BusinessTypeEnum.WITHDRAW));
+        String orderId = RandomUtils.getBusinessOrderId(BusinessTypeEnum.WITHDRAW);
+        if (req.getChannel() == 1) {
+            orderId = "WX" + orderId;
+        } else {
+            orderId = "ZFB" + orderId;
+        }
+        order.setOrderNo(orderId);
         order.setPlayerId(pid);
         int ret = withdrawOrderMapper.insert(order);
         if (ret == 1) {
@@ -306,8 +315,28 @@ public class PlayerServiceImpl implements PlayerService {
         throw new ServiceException(RespLobbyCode.WITHDRAW_FAIL);
     }
 
+    @Override
+    public RespResult<PageDto<WithdrawOrderRes>> withDrawList(PageBaseParam req) {
+        PageHelper.startPage(req.getPage(), req.getLimit());
+        String pid = commonService.getCurrPid();
+        List<WithdrawOrder> list = withdrawOrderMapper.selectByPid(pid);
+        List<WithdrawOrderRes> listRet = new ArrayList<>();
+        PageInfo<WithdrawOrder> pageInfo = new PageInfo<>(list);
+        PageDto<WithdrawOrderRes> target = new PageDto<>();
+        BeanUtilsCopy.copyProperties(pageInfo, target);
+        for (WithdrawOrder order:list) {
+            WithdrawOrderRes obj = new WithdrawOrderRes();
+            BeanUtilsCopy.copyProperties(order, obj);
+            listRet.add(obj);
+        }
+        target.setList(listRet);
+        return RespUtil.success(target);
+    }
 
+    public RespResult<WalletRes> getMyWallet() {
 
+        return RespUtil.success(null);
+    }
 
 
     private String getThirdUserInfo(LoginReq req, LoginRes res) {

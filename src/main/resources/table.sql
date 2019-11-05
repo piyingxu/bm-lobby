@@ -42,10 +42,10 @@ create table t_withdraw_order (
   account_name varchar(100) NOT NULL COMMENT '账号名称',
   amount int(11)  NOT NULL COMMENT '金额：单位分',
   status int(11) DEFAULT 1 COMMENT '状态：1-审核中 2-成功  3-失败',
-  remark varchar(1000) NOT NULL COMMENT '订单号',
+  remark varchar(1000) COMMENT '订单号',
   create_time timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
   update_time timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
-  UNIQUE KEY idx_player_id (player_id),
   UNIQUE KEY idx_order_no (order_no),
+  KEY idx_player_id (player_id),
   PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='提现订单信息表';

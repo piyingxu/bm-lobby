@@ -63,7 +63,7 @@ public class RandomUtils {
      * @return
      */
     public static String getBusinessOrderId(BusinessTypeEnum type) {
-        String msgId = getStringRandom(8).toLowerCase();
+        String msgId = randomStr(8).toLowerCase();
         return  type.getId()+msgId;
     }
 

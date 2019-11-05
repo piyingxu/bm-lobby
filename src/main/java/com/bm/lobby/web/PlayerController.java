@@ -1,5 +1,7 @@
 package com.bm.lobby.web;
 
+import com.bm.lobby.dto.base.PageBaseParam;
+import com.bm.lobby.dto.base.PageDto;
 import com.bm.lobby.dto.base.RespResult;
 import com.bm.lobby.dto.req.CheckInAwardReq;
 import com.bm.lobby.dto.req.LoginReq;
@@ -71,4 +73,9 @@ public class PlayerController {
         return playerService.withDraw(req);
     }
 
+    @ApiOperation("9、提现记录")
+    @PostMapping("withDrawList")
+    public RespResult<PageDto<WithdrawOrderRes>> withDrawList(@RequestBody PageBaseParam req) {
+        return playerService.withDrawList(req);
+    }
 }

@@ -1,6 +1,7 @@
 package com.bm.lobby.dto.req;
 
 import com.bm.lobby.dto.base.BaseEntity;
+import com.bm.lobby.dto.base.PageBaseParam;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;

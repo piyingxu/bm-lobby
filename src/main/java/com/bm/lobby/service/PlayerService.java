@@ -1,5 +1,7 @@
 package com.bm.lobby.service;
 
+import com.bm.lobby.dto.base.PageBaseParam;
+import com.bm.lobby.dto.base.PageDto;
 import com.bm.lobby.dto.base.RespResult;
 import com.bm.lobby.dto.req.CheckInAwardReq;
 import com.bm.lobby.dto.req.LoginReq;
@@ -31,5 +33,7 @@ public interface PlayerService {
     RespResult<PlayerInfoRes> getUserInfo();
 
     RespResult<Void> withDraw(WithDrawReq req);
+
+    RespResult<PageDto<WithdrawOrderRes>> withDrawList(PageBaseParam req);
 
 }

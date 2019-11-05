@@ -30,7 +30,7 @@
     select
     <include refid="Base_Column_List" />
     from t_withdraw_order
-    where player_id = #{pid,jdbcType=VARCHAR}
+    where player_id = #{pid,jdbcType=VARCHAR} order by create_time desc
   </select>
 
   <insert id="insert" parameterType="com.bm.lobby.model.WithdrawOrder" >
