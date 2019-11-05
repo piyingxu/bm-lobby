@@ -78,4 +78,16 @@ public class PlayerController {
     public RespResult<PageDto<WithdrawOrderRes>> withDrawList(@RequestBody PageBaseParam req) {
         return playerService.withDrawList(req);
     }
+
+    @ApiOperation("10、用户活跃度查询")
+    @PostMapping("getActivityDay")
+    public RespResult<Integer> getActivityDay() {
+        return playerService.getActivityDay();
+    }
+
+    @ApiOperation("11、我的钱包")
+    @PostMapping("getMyWallet")
+    public RespResult<WalletRes> getMyWallet() {
+        return playerService.getMyWallet();
+    }
 }

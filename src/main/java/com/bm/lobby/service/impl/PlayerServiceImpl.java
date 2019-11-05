@@ -333,8 +333,13 @@ public class PlayerServiceImpl implements PlayerService {
         return RespUtil.success(target);
     }
 
-    public RespResult<WalletRes> getMyWallet() {
+    @Override
+    public RespResult<Integer> getActivityDay() {
+        return RespUtil.success(3);
+    }
 
+    @Override
+    public RespResult<WalletRes> getMyWallet() {
         return RespUtil.success(null);
     }
 

@@ -3,6 +3,7 @@ package com.bm.lobby.service;
 import com.bm.lobby.dto.base.PageBaseParam;
 import com.bm.lobby.dto.base.PageDto;
 import com.bm.lobby.dto.base.RespResult;
+import com.bm.lobby.dto.base.RespUtil;
 import com.bm.lobby.dto.req.CheckInAwardReq;
 import com.bm.lobby.dto.req.LoginReq;
 import com.bm.lobby.dto.req.RankReq;
@@ -35,5 +36,9 @@ public interface PlayerService {
     RespResult<Void> withDraw(WithDrawReq req);
 
     RespResult<PageDto<WithdrawOrderRes>> withDrawList(PageBaseParam req);
+
+    RespResult<Integer> getActivityDay();
+
+    RespResult<WalletRes> getMyWallet();
 
 }
