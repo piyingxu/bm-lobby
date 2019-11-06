@@ -80,20 +80,38 @@ public class PlayerController {
     }
 
     @ApiOperation("10、用户活跃度查询")
-    @PostMapping("getActivityDay")
+    @GetMapping("getActivityDay")
     public RespResult<Integer> getActivityDay() {
         return playerService.getActivityDay();
     }
 
     @ApiOperation("11、我的钱包")
-    @PostMapping("getMyWallet")
+    @GetMapping("getMyWallet")
     public RespResult<WalletRes> getMyWallet() {
         return playerService.getMyWallet();
     }
 
     @ApiOperation("12、查询广播列表")
-    @PostMapping("getBroadcastList")
+    @GetMapping("getBroadcastList")
     public RespResult<List<BroadcastRes>> getBroadcastList() {
         return playerService.getBroadcastList();
+    }
+
+    @ApiOperation("13、领取活跃宝箱奖励")
+    @GetMapping("getActiveBoxAward")
+    public RespResult<Long> getActiveBoxAward() {
+        return playerService.getActiveBoxAward();
+    }
+
+    @ApiOperation("14、获取幸运盆主页信息")
+    @GetMapping("getLuckBasin")
+    public RespResult<LuckBasinRes> getLuckBasin() {
+        return playerService.getLuckBasin();
+    }
+
+    @ApiOperation("15、幸运盆抽奖")
+    @GetMapping("doLuckBasin")
+    public RespResult<LuckBasinItem> doLuckBasin() {
+        return playerService.doLuckBasin();
     }
 }

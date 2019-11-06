@@ -1,5 +1,6 @@
 package com.bm.lobby.service.impl;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.bm.lobby.config.LobbyConfiguration;
 import com.bm.lobby.dao.GameConfigMapper;
 import com.bm.lobby.dao.PlayerInfoMapper;
@@ -12,10 +13,7 @@ import com.bm.lobby.model.GameConfig;
 import com.bm.lobby.model.PlayerInfo;
 import com.bm.lobby.model.WithdrawOrder;
 import com.bm.lobby.service.*;
-import com.bm.lobby.util.BeanUtilsCopy;
-import com.bm.lobby.util.DateUtil;
-import com.bm.lobby.util.RandomUtils;
-import com.bm.lobby.util.StringUtil;
+import com.bm.lobby.util.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.CollectionUtils;
@@ -94,10 +92,10 @@ public class PlayerServiceImpl implements PlayerService {
         loginRes.setToken(token);
         loginRes.setPid(playerId);
         //获取配置游戏列表
-        List<GameConfig> gameListDb =  gameConfigMapper.selectByAppId(httpHeadReq.getAppId());
+        List<GameConfig> gameListDb = gameConfigMapper.selectByAppId(httpHeadReq.getAppId());
         List<GameDto> gameList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(gameListDb)) {
-            for (GameConfig game:gameListDb) {
+            for (GameConfig game : gameListDb) {
                 GameDto dto = new GameDto();
                 BeanUtilsCopy.copyProperties(game, dto);
                 gameList.add(dto);
@@ -116,7 +114,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public RespResult<Void> logout () {
+    public RespResult<Void> logout() {
         String pid = commonService.getCurrPid();
         HttpHeadReq httpHeadReq = commonService.getHeadParam();
         //解绑token、playerId
@@ -126,32 +124,32 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public RespResult<Long> refreshGold () {
+    public RespResult<Long> refreshGold() {
         String pid = commonService.getCurrPid();
-        long gold =  magicService.getOrUpMagic(MagicEnum.GOLD, pid, 0);
+        long gold = magicService.getOrUpMagic(MagicEnum.GOLD, pid, 0);
         return RespUtil.success(gold);
     }
 
     @Override
-    public RespResult<List<CheckInRes>> getCheckInStatus () {
+    public RespResult<List<CheckInRes>> getCheckInStatus() {
         TreeMap<Integer, CheckInDto> checkInConfig = commonService.getCheckInConfig();
         String pid = commonService.getCurrPid();
-        Map<String, Object> checkInStatusMap =redisService.hgetAll(RedisTableEnum.getCheckInKey(pid));
+        Map<String, Object> checkInStatusMap = redisService.hgetAll(RedisTableEnum.getCheckInKey(pid));
         if (checkInStatusMap == null || checkInStatusMap.size() == 0) {
             checkInStatusMap = new HashMap<>();
-            for (CheckInDto hour:checkInConfig.values()) {
+            for (CheckInDto hour : checkInConfig.values()) {
                 checkInStatusMap.put(String.valueOf(hour.getHour()), String.valueOf(CheckInStatusEnum.UNREACHED_TIME.getCode()));
             }
             // 本日初始化
-            redisService.putAll(RedisTableEnum.getCheckInKey(pid), checkInStatusMap, 60*60*24*2);
+            redisService.putAll(RedisTableEnum.getCheckInKey(pid), checkInStatusMap, 60 * 60 * 24 * 2);
         }
         String waitTimeDb = redisService.hget(RedisTableEnum.getCheckInKey(pid), RedisTableEnum.CHECKIN_NEXTTIME.getCode());
         long waitTime = 0;
         if (StringUtils.isNotEmpty(waitTimeDb) && Long.parseLong(waitTimeDb) > System.currentTimeMillis()) {
-            waitTime = (Long.parseLong(waitTimeDb) - System.currentTimeMillis())/1000;
+            waitTime = (Long.parseLong(waitTimeDb) - System.currentTimeMillis()) / 1000;
         }
         List<CheckInRes> retArr = new ArrayList<>();
-        for (Integer timeHour:checkInConfig.keySet()) {
+        for (Integer timeHour : checkInConfig.keySet()) {
             CheckInDto checkInDto = checkInConfig.get(timeHour);
             int timeHour_next = timeHour + 4;
             CheckInRes checkInRes = new CheckInRes();
@@ -182,7 +180,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public RespResult<CheckInAwardRes> getCheckInAward (CheckInAwardReq req) {
+    public RespResult<CheckInAwardRes> getCheckInAward(CheckInAwardReq req) {
         TreeMap<Integer, CheckInDto> checkInConfig = commonService.getCheckInConfig();
         if (!checkInConfig.containsKey(req.getHour())) {
             throw new ServiceException(RespLobbyCode.PARAM_ERROR);
@@ -215,7 +213,7 @@ public class PlayerServiceImpl implements PlayerService {
                 throw new ServiceException(RespLobbyCode.UNREACHED_TIME_REPAIR);
             } else {
                 //非补签的情况下，补签的倒计时继续
-                waitTime = (Long.parseLong(waitTimeDb) - System.currentTimeMillis())/1000;
+                waitTime = (Long.parseLong(waitTimeDb) - System.currentTimeMillis()) / 1000;
             }
         }
         CheckInDto checkInDto = checkInConfig.get(req.getHour());
@@ -238,7 +236,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public RespResult<RankRes> getRankList (RankReq req) {
+    public RespResult<RankRes> getRankList(RankReq req) {
         List<RankItemDTO> retList = new ArrayList<>();
         RankRes ret = new RankRes();
         RankItemDTO mine = new RankItemDTO();
@@ -246,7 +244,7 @@ public class PlayerServiceImpl implements PlayerService {
         ret.setMine(mine);
         Set<ZSetOperations.TypedTuple<String>> rank = null;
         if (req.getType() == RankEnum.GOLD.getCode()) {
-            rank = redisService.reverseRangeWithScores(RedisTableEnum.RANK_GOLD.getCode(), 0 ,99);
+            rank = redisService.reverseRangeWithScores(RedisTableEnum.RANK_GOLD.getCode(), 0, 99);
         }
         if (rank != null) {
             int top = 1;
@@ -266,10 +264,9 @@ public class PlayerServiceImpl implements PlayerService {
             }
         }
         String pid = commonService.getCurrPid();
-        PlayerInfo playerInfo = playerInfoMapper.selectByPrimaryKey(pid);
         long top = redisService.zrank(RedisTableEnum.RANK_GOLD.getCode(), pid);
         double score = redisService.zScore(RedisTableEnum.RANK_GOLD.getCode(), pid);
-        mine.setTop((int)top);
+        mine.setTop((int) top);
         mine.setPid(pid);
         mine.setScore(Math.round(score));
         PlayerInfo minePlayerInfo = playerInfoMapper.selectByPrimaryKey(pid);
@@ -289,7 +286,7 @@ public class PlayerServiceImpl implements PlayerService {
         }
         PlayerInfoRes ret = new PlayerInfoRes();
         BeanUtilsCopy.copyProperties(playerInfo, ret);
-        long gold =  magicService.getOrUpMagic(MagicEnum.GOLD, pid, 0);
+        long gold = magicService.getOrUpMagic(MagicEnum.GOLD, pid, 0);
         ret.setPid(pid);
         ret.setGold(gold);
         return RespUtil.success(ret);
@@ -324,7 +321,7 @@ public class PlayerServiceImpl implements PlayerService {
         PageInfo<WithdrawOrder> pageInfo = new PageInfo<>(list);
         PageDto<WithdrawOrderRes> target = new PageDto<>();
         BeanUtilsCopy.copyProperties(pageInfo, target);
-        for (WithdrawOrder order:list) {
+        for (WithdrawOrder order : list) {
             WithdrawOrderRes obj = new WithdrawOrderRes();
             BeanUtilsCopy.copyProperties(order, obj);
             listRet.add(obj);
@@ -340,19 +337,66 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public RespResult<WalletRes> getMyWallet() {
+        String pid = commonService.getCurrPid();
+        long gold = magicService.getOrUpMagic(MagicEnum.GOLD, pid, 0);
+
+
         return RespUtil.success(null);
     }
 
     @Override
     public RespResult<List<BroadcastRes>> getBroadcastList() {
-
-
-        return RespUtil.success(null);
+        List<BroadcastRes> retList = new ArrayList<>();
+        Map<String, Object> tempMap = redisService.hgetAll(RedisTableEnum.BROADCAST.getCode());
+        if (tempMap != null) {
+            for (String key : tempMap.keySet()) {
+                String val = String.valueOf(tempMap.get(key));
+                BroadcastRes obj = GsonUtils.fromJson2Object(val, BroadcastRes.class);
+                retList.add(obj);
+            }
+        }
+        return RespUtil.success(retList);
     }
 
+    @Override
+    public RespResult<Long> getActiveBoxAward() {
+        long award = 300;
+        String pid = commonService.getCurrPid();
+        magicService.getOrUpMagic(MagicEnum.GOLD, pid, award);
+        return RespUtil.success(award);
+    }
+
+    @Override
+    public RespResult<LuckBasinRes> getLuckBasin() {
+        LuckBasinRes res = new LuckBasinRes();
+        List<LuckBasinItem> itemList = new ArrayList<>();
+        res.setCost(100);
+        res.setPlayedNum(0);
+        res.setItem(itemList);
+
+        for (int i = 0; i < 6; i++) {
+            LuckBasinItem item = new LuckBasinItem();
+            item.setIndex(i);
+            item.setImg("https://mat1.gtimg.com/pingjs/ext2020/qqindex2018/dist/img/qq_logo_2x.png");
+            item.setContent("金币" + (i + 1) * 100);
+            item.setMagicId("1001");
+            itemList.add(item);
+        }
+        return RespUtil.success(res);
+    }
+
+    @Override
+    public RespResult<LuckBasinItem> doLuckBasin() {
+        LuckBasinItem item = new LuckBasinItem();
+        item.setIndex(3);
+        item.setImg("https://mat1.gtimg.com/pingjs/ext2020/qqindex2018/dist/img/qq_logo_2x.png");
+        item.setContent("金币" + 300);
+        item.setMagicId("1001");
+        return RespUtil.success(item);
+    }
 
     private String getThirdUserInfo(LoginReq req, LoginRes res) {
-        /*Map<String, Object> wxAccessToken = thirdPartService.getWxAccessToken(req.getAuthToken());
+        Map<String, Object> wxAccessToken = thirdPartService.getWxAccessToken(req.getAuthToken());
         Object wxATErrorCode = wxAccessToken.get("errcode");
         Object wxErrmsg = wxAccessToken.get("errmsg");
         if (wxATErrorCode != null) {
@@ -370,12 +414,8 @@ public class PlayerServiceImpl implements PlayerService {
             throw new ServiceException(RespLobbyCode.AUTH_ERROR);
         }
         res.setNickName(String.valueOf(nickNameObj));
-        res.setHeadUrl(String.valueOf(headImgUrlObj));*/
-
-        res.setNickName(String.valueOf("zhangheng"));
-        res.setHeadUrl(String.valueOf("http://xxx"));
-
-        return "1572506157813";
+        res.setHeadUrl(String.valueOf(headImgUrlObj));
+        return openId;
     }
 
 

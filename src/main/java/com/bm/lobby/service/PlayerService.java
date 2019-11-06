@@ -43,4 +43,10 @@ public interface PlayerService {
 
     RespResult<List<BroadcastRes>> getBroadcastList();
 
+    RespResult<Long> getActiveBoxAward();
+
+    RespResult<LuckBasinRes> getLuckBasin();
+
+    RespResult<LuckBasinItem> doLuckBasin();
+
 }

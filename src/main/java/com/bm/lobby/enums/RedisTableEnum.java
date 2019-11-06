@@ -22,6 +22,8 @@ public enum RedisTableEnum {
 
 	RANK_GOLD("game:rank:gold", "排行榜-金币"),
 
+	BROADCAST("game:broadcast", "广播"),
+
 	;
 
 	private String code;
