@@ -41,4 +41,6 @@ public interface PlayerService {
 
     RespResult<WalletRes> getMyWallet();
 
+    RespResult<List<BroadcastRes>> getBroadcastList();
+
 }

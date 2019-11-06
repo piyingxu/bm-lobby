@@ -343,6 +343,13 @@ public class PlayerServiceImpl implements PlayerService {
         return RespUtil.success(null);
     }
 
+    @Override
+    public RespResult<List<BroadcastRes>> getBroadcastList() {
+
+
+        return RespUtil.success(null);
+    }
+
 
     private String getThirdUserInfo(LoginReq req, LoginRes res) {
         /*Map<String, Object> wxAccessToken = thirdPartService.getWxAccessToken(req.getAuthToken());

@@ -90,4 +90,10 @@ public class PlayerController {
     public RespResult<WalletRes> getMyWallet() {
         return playerService.getMyWallet();
     }
+
+    @ApiOperation("12、查询广播列表")
+    @PostMapping("getBroadcastList")
+    public RespResult<List<BroadcastRes>> getBroadcastList() {
+        return playerService.getBroadcastList();
+    }
 }
