@@ -67,6 +67,12 @@ public class PlayerController {
         return playerService.getUserInfo();
     }
 
+    @ApiOperation("8A、提现界面参数请求")
+    @PostMapping("withDraw")
+    public RespResult<Void> withDrawMainPage(@RequestBody @Valid WithDrawReq req) {
+        return playerService.withDraw(req);
+    }
+
     @ApiOperation("8、申请提现")
     @PostMapping("withDraw")
     public RespResult<Void> withDraw(@RequestBody @Valid WithDrawReq req) {

@@ -18,6 +18,9 @@ public class GameEndReq extends BaseEntity {
     @ApiModelProperty(value = "当前关卡", example = "1")
     private String chapter;
 
+    @ApiModelProperty(value = "扩展字段", example = "1")
+    private String extend;
+
     public String getPlayid() {
         return playid;
     }
@@ -40,5 +43,13 @@ public class GameEndReq extends BaseEntity {
 
     public void setChapter(String chapter) {
         this.chapter = chapter;
+    }
+
+    public String getExtend() {
+        return extend;
+    }
+
+    public void setExtend(String extend) {
+        this.extend = extend;
     }
 }

@@ -22,8 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.*;
 
 /**
@@ -292,13 +294,24 @@ public class PlayerServiceImpl implements PlayerService {
         return RespUtil.success(ret);
     }
 
+
+    public RespResult<WithdrawMainPageRes> withDrawMainPage() {
+
+
+
+        return null;
+    }
+
+
+
+
     @Override
     public RespResult<Void> withDraw(WithDrawReq req) {
         String pid = commonService.getCurrPid();
         WithdrawOrder order = new WithdrawOrder();
         BeanUtilsCopy.copyProperties(req, order);
         String orderId = RandomUtils.getBusinessOrderId(BusinessTypeEnum.WITHDRAW);
-        if (req.getChannel() == 1) {
+        if (req.getChannel() == PayChannelEnum.WECHAT.getType()) {
             orderId = "WX" + orderId;
         } else {
             orderId = "ZFB" + orderId;

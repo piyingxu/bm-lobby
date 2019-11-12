@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Api(description = "游戏相关接口", tags = "GAME")
 @RestController
-@RequestMapping("/api/game")
+@RequestMapping("/api/game/third")
 public class GameController {
 
     @ApiOperation("1、注册")
