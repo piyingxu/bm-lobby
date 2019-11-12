@@ -20,6 +20,14 @@ public class HttpHeadReq extends BaseEntity {
 
     private String sign;
 
+    private String gameId;
+
+    private String timestamp;
+
+    private String playerId;
+
+    private String bodyJson;
+
     public String getToken() {
         return token;
     }
@@ -66,5 +74,37 @@ public class HttpHeadReq extends BaseEntity {
 
     public void setSign(String sign) {
         this.sign = sign;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
+    }
+
+    public String getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
+    }
+
+    public String getBodyJson() {
+        return bodyJson;
+    }
+
+    public void setBodyJson(String bodyJson) {
+        this.bodyJson = bodyJson;
     }
 }

@@ -1,5 +1,5 @@
 server:
-  port: 9081
+  port: 8004
 
 spring.datasource.url: "jdbc:mysql://120.79.5.223:3306/lobby?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false"
 spring.datasource.username: "root"

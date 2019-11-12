@@ -13,6 +13,14 @@ public enum HttpParamEnum {
 	CLIENT_VER("CLIENT_VER", "客户端版本号"),
 	
 	REQ_SIGN("REQ_SIGN", "请求签名"),
+
+    GAME_SIGN("sign", "GAME_SIGN"),
+
+    PLAYER_ID("playerid", "PLAYER_ID"),
+
+    GAME_ID("gameid", "GAME_ID"),
+
+    TIMESTAMP("timestamp", "TIMESTAMP"),
 	
 	;
 
