@@ -49,3 +49,17 @@ create table t_withdraw_order (
   KEY idx_player_id (player_id),
   PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='提现订单信息表';
+
+drop table if exists t_login_log;
+create table t_login_log (
+  id bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  app_id varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'appid',
+  player_id varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '玩家id',
+  client_type varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '客户端类型：1-android, 2-ios, 3-H5 ',
+  client_version varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '客户端版本号',
+  login_ip  varchar(200) COLLATE utf8mb4_unicode_ci COMMENT '登录Ip',
+  create_time timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '登录时间',
+  update_time timestamp(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
+  PRIMARY KEY (id),
+  KEY idx_player_id (player_id)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='登录日志表';
