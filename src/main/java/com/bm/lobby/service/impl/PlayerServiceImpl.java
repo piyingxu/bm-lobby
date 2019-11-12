@@ -294,16 +294,32 @@ public class PlayerServiceImpl implements PlayerService {
         return RespUtil.success(ret);
     }
 
-
+    @Override
     public RespResult<WithdrawMainPageRes> withDrawMainPage() {
-
-
-
-        return null;
+        WithdrawMainPageRes rlt = new WithdrawMainPageRes();
+        String pid = commonService.getCurrPid();
+        PlayerInfo playerInfo = playerInfoMapper.selectByPrimaryKey(pid);
+        if (playerInfo == null) {
+            throw new ServiceException(RespLobbyCode.PLAYER_UNEXIST);
+        }
+        long gold = magicService.getOrUpMagic(MagicEnum.GOLD, pid, 0);
+        List<Integer> payChannel = new ArrayList<>();
+        payChannel.add(PayChannelEnum.WECHAT.getType());
+        payChannel.add(PayChannelEnum.ALIPAY.getType());
+        List<WithdrawMainPageDto> withDrawAmont = new ArrayList<>();
+        WithdrawMainPageDto dto = new WithdrawMainPageDto();
+        dto.setAmout(1);
+        dto.setCondition("需活跃度达到2点");
+        WithdrawMainPageDto dto1 = new WithdrawMainPageDto();
+        dto1.setAmout(5);
+        dto1.setCondition("需活跃度达到10点");
+        withDrawAmont.add(dto);withDrawAmont.add(dto1);
+        rlt.setGold(gold);
+        rlt.setActivity(2);
+        rlt.setPayChannel(payChannel);
+        rlt.setWithDrawAmont(withDrawAmont);
+        return RespUtil.success(rlt);
     }
-
-
-
 
     @Override
     public RespResult<Void> withDraw(WithDrawReq req) {

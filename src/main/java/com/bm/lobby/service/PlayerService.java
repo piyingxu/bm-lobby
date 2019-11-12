@@ -35,6 +35,8 @@ public interface PlayerService {
 
     RespResult<Void> withDraw(WithDrawReq req);
 
+    RespResult<WithdrawMainPageRes> withDrawMainPage();
+
     RespResult<PageDto<WithdrawOrderRes>> withDrawList(PageBaseParam req);
 
     RespResult<Integer> getActivityDay();
