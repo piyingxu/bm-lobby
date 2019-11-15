@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bm.lobby.dao.GameLogMapper" >
+  <resultMap id="BaseResultMap" type="com.bm.lobby.model.GameLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="player_id" property="playerId" jdbcType="VARCHAR" />
+    <result column="game_id" property="gameId" jdbcType="VARCHAR" />
+    <result column="play_id" property="playId" jdbcType="VARCHAR" />
+    <result column="chapter" property="chapter" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, player_id, game_id, play_id, chapter, score, create_time, update_time
+  </sql>
+  <select id="selectByCondition" resultMap="BaseResultMap"  >
+      select  <include refid="Base_Column_List" /> from t_game_log where 1=1
+      <if test="conditions.pid != null">
+          AND player_id = #{conditions.pid}
+      </if>
+      <if test="conditions.startTime != null">
+          AND create_time &gt;= #{conditions.startTime}
+      </if>
+      <if test="conditions.endTime != null">
+          AND create_time &gt;= #{conditions.endTime}
+      </if>
+      order by create_time desc
+  </select>
+
+  <insert id="insertSelective" parameterType="com.bm.lobby.model.GameLog" >
+    insert into t_game_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="playerId != null" >
+        player_id,
+      </if>
+      <if test="gameId != null" >
+        game_id,
+      </if>
+      <if test="playId != null" >
+        play_id,
+      </if>
+      <if test="chapter != null" >
+        chapter,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="playerId != null" >
+        #{playerId,jdbcType=VARCHAR},
+      </if>
+      <if test="gameId != null" >
+        #{gameId,jdbcType=VARCHAR},
+      </if>
+      <if test="playId != null" >
+        #{playId,jdbcType=VARCHAR},
+      </if>
+      <if test="chapter != null" >
+        #{chapter,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+</mapper>

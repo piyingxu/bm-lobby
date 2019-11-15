@@ -1,7 +1,7 @@
 server:
   port: 8004
 
-spring.datasource.url: "jdbc:mysql://127.0.0.1:3306/order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false"
+spring.datasource.url: "jdbc:mysql://127.0.0.1:3306/bm_lobby?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false"
 spring.datasource.username: "root"
 spring.datasource.password: "123456"
 

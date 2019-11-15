@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bm.lobby.dao.LoginLogMapper" >
+  <resultMap id="BaseResultMap" type="com.bm.lobby.model.LoginLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+    <result column="player_id" property="playerId" jdbcType="VARCHAR" />
+    <result column="client_type" property="clientType" jdbcType="VARCHAR" />
+    <result column="client_version" property="clientVersion" jdbcType="VARCHAR" />
+    <result column="login_ip" property="loginIp" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, app_id, player_id, client_type, client_version, login_ip, create_time, update_time
+  </sql>
+    <select id="selectByCondition" resultMap="BaseResultMap"  >
+        select  <include refid="Base_Column_List" /> from t_login_log where 1=1
+        <if test="conditions.pid != null">
+            AND player_id = #{conditions.pid}
+        </if>
+        <if test="conditions.startTime != null">
+            AND create_time &gt;= #{conditions.startTime}
+        </if>
+        <if test="conditions.endTime != null">
+            AND create_time &gt;= #{conditions.endTime}
+        </if>
+        order by create_time desc
+    </select>
+
+  <insert id="insertSelective" parameterType="com.bm.lobby.model.LoginLog" >
+    insert into t_login_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+      <if test="playerId != null" >
+        player_id,
+      </if>
+      <if test="clientType != null" >
+        client_type,
+      </if>
+      <if test="clientVersion != null" >
+        client_version,
+      </if>
+      <if test="loginIp != null" >
+        login_ip,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="playerId != null" >
+        #{playerId,jdbcType=VARCHAR},
+      </if>
+      <if test="clientType != null" >
+        #{clientType,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null" >
+        #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="loginIp != null" >
+        #{loginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+</mapper>

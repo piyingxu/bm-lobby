@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bm.lobby.dao.MagicBankMapper" >
+  <resultMap id="BaseResultMap" type="com.bm.lobby.model.MagicBank" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="player_id" property="playerId" jdbcType="VARCHAR" />
+    <result column="magic_id" property="magicId" jdbcType="VARCHAR" />
+    <result column="able_amount" property="ableAmount" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, player_id, magic_id, able_amount, create_time, update_time
+  </sql>
+  <select id="selectByCondition" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" /> from t_magic_bank where 1=1
+      <if test="conditions.pid != null">
+          AND player_id = #{conditions.pid}
+      </if>
+      <if test="conditions.magicId != null">
+          AND magic_id = #{conditions.magicId}
+      </if>
+      order by create_time desc limit 0,1
+  </select>
+
+    <select id="selectByPid" resultMap="BaseResultMap"  parameterType="java.lang.String">
+        select  <include refid="Base_Column_List" /> from t_magic_bank where player_id = #{pid}
+    </select>
+
+  <insert id="insertSelective" parameterType="com.bm.lobby.model.MagicBank" >
+    insert into t_magic_bank
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="playerId != null" >
+        player_id,
+      </if>
+      <if test="magicId != null" >
+        magic_id,
+      </if>
+      <if test="ableAmount != null" >
+        able_amount,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="playerId != null" >
+        #{playerId,jdbcType=VARCHAR},
+      </if>
+      <if test="magicId != null" >
+        #{magicId,jdbcType=VARCHAR},
+      </if>
+      <if test="ableAmount != null" >
+        #{ableAmount,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bm.lobby.model.MagicBank" >
+    update t_magic_bank
+    <set >
+      <if test="playerId != null" >
+        player_id = #{playerId,jdbcType=VARCHAR},
+      </if>
+      <if test="magicId != null" >
+        magic_id = #{magicId,jdbcType=VARCHAR},
+      </if>
+      <if test="ableAmount != null" >
+        able_amount = #{ableAmount,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
